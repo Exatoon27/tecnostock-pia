@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2331" height="736" viewBox="0 0 2331 736" font-family="Segoe UI, Arial, sans-serif" fill="#15221f">
+<defs><marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#15221f"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="24" y="38" font-size="26" font-weight="700">Proceso 4 · Devolución de un producto</text>
+<text x="24" y="66" font-size="16" fill="#5b6965">Plazo de 15 días, producto en buen estado y clave del Supervisor. Origen: BPMN de U2.</text>
+<rect x="0" y="96" width="2331" height="190" fill="#f3f6f4" stroke="#9fb0aa"/>
+<rect x="0" y="96" width="64" height="190" fill="#0c3a33"/>
+<text transform="translate(34.0 191.0) rotate(-90)" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="700" fill="#eef7f4">CLIENTE</text>
+<rect x="0" y="286" width="2331" height="190" fill="#ffffff" stroke="#9fb0aa"/>
+<rect x="0" y="286" width="64" height="190" fill="#0c3a33"/>
+<text transform="translate(34.0 381.0) rotate(-90)" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="700" fill="#eef7f4">CAJERO</text>
+<rect x="0" y="476" width="2331" height="190" fill="#f3f6f4" stroke="#9fb0aa"/>
+<rect x="0" y="476" width="64" height="190" fill="#0c3a33"/>
+<text transform="translate(34.0 571.0) rotate(-90)" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="700" fill="#eef7f4">SUPERVISOR</text>
+<polyline points="211,206 211,367 383,367" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="579,367 644,367" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="751,311 751,177 923,177" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="751,423 751,557 923,557" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="1119,557 1184,557" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="1291,501 1291,206" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="1398,557 1463,557" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="1659,557 1696,557 1696,367 1733,367" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="1929,367 2101,367 2101,206" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<rect x="113.0" y="148.0" width="196" height="58" rx="29.0" fill="#e3f4ea" stroke="#1f7a3d" stroke-width="2"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="700"><tspan x="211" y="177">Pide una devolución</tspan></text>
+<rect x="383.0" y="331.0" width="196" height="72" rx="9" fill="#ffffff" stroke="#0c3a33" stroke-width="1.6"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="481" y="348">Solicitar el</tspan><tspan x="481" y="367">comprobante y verificar</tspan><tspan x="481" y="386">que no pasen de 15 días</tspan></text>
+<polygon points="751,311.0 858.0,367.0 751,423.0 644.0,367.0" fill="#fdf3d0" stroke="#8a6d1a" stroke-width="1.8"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="751" y="358">¿Dentro de los</tspan><tspan x="751" y="376">15 días?</tspan></text>
+<rect x="923.0" y="148.0" width="196" height="58" rx="29.0" fill="#fbe3df" stroke="#a63a2b" stroke-width="4"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="700"><tspan x="1021" y="168">Devolución rechazada</tspan><tspan x="1021" y="186">por tiempo</tspan></text>
+<rect x="923.0" y="521.0" width="196" height="72" rx="9" fill="#ffffff" stroke="#0c3a33" stroke-width="1.6"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="1021" y="538">Inspeccionar estado</tspan><tspan x="1021" y="557">físico, empaque y</tspan><tspan x="1021" y="576">accesorios</tspan></text>
+<polygon points="1291,501.0 1398.0,557.0 1291,613.0 1184.0,557.0" fill="#fdf3d0" stroke="#8a6d1a" stroke-width="1.8"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="1291" y="557">¿Estado óptimo?</tspan></text>
+<rect x="1193.0" y="148.0" width="196" height="58" rx="29.0" fill="#fbe3df" stroke="#a63a2b" stroke-width="4"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="700"><tspan x="1291" y="168">Devolución rechazada</tspan><tspan x="1291" y="186">por daño</tspan></text>
+<rect x="1463.0" y="521.0" width="196" height="72" rx="9" fill="#ffffff" stroke="#0c3a33" stroke-width="1.6"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="1561" y="538">Ingresar la clave de</tspan><tspan x="1561" y="557">autenticación del</tspan><tspan x="1561" y="576">Supervisor</tspan></text>
+<rect x="1733.0" y="331.0" width="196" height="72" rx="9" fill="#ffffff" stroke="#0c3a33" stroke-width="1.6"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="1831" y="348">Emitir nota de crédito</tspan><tspan x="1831" y="367">o reembolso y</tspan><tspan x="1831" y="386">reingresar la serie</tspan></text>
+<line x1="1831" y1="403.0" x2="1831" y2="417.0" stroke="#5b6965" stroke-dasharray="4 3"/>
+<path d="M1745 417.0 h160 l12 12 v36 h-172z" fill="#ffffff" stroke="#5b6965"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="13"><tspan x="1831" y="429">Nota de crédito / entrada</tspan><tspan x="1831" y="445">a stock</tspan></text>
+<rect x="2003.0" y="148.0" width="196" height="58" rx="29.0" fill="#fbe3df" stroke="#a63a2b" stroke-width="4"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="700"><tspan x="2101" y="168">Devolución procesada</tspan><tspan x="2101" y="186">con éxito</tspan></text>
+<text x="761" y="301" font-size="15" font-weight="700" text-anchor="start" paint-order="stroke" stroke="#ffffff" stroke-width="5">No</text>
+<text x="761" y="445" font-size="15" font-weight="700" text-anchor="start" paint-order="stroke" stroke="#ffffff" stroke-width="5">Sí</text>
+<text x="1301" y="491" font-size="15" font-weight="700" text-anchor="start" paint-order="stroke" stroke="#ffffff" stroke-width="5">No</text>
+<text x="1410" y="547" font-size="15" font-weight="700" text-anchor="start" paint-order="stroke" stroke="#ffffff" stroke-width="5">Sí</text>
+<rect x="24" y="702" width="34" height="18" rx="9" fill="#e3f4ea" stroke="#1f7a3d" stroke-width="2"/><text x="66" y="716" font-size="14" fill="#5b6965">Inicio</text><rect x="140" y="702" width="34" height="18" rx="4" fill="#ffffff" stroke="#0c3a33" stroke-width="1.6"/><text x="182" y="716" font-size="14" fill="#5b6965">Actividad</text><rect x="280" y="702" width="34" height="18" rx="4" fill="#fdf3d0" stroke="#8a6d1a" stroke-width="1.8"/><text x="322" y="716" font-size="14" fill="#5b6965">Decisión</text><rect x="412" y="702" width="34" height="18" rx="9" fill="#fbe3df" stroke="#a63a2b" stroke-width="2"/><text x="454" y="716" font-size="14" fill="#5b6965">Fin</text><rect x="504" y="702" width="34" height="18" rx="4" fill="#e0edfb" stroke="#1d5fa8" stroke-width="1.8"/><text x="546" y="716" font-size="14" fill="#5b6965">Pasa a otro proceso</text>
+</svg>

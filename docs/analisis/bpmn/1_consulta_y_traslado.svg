@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2763" height="1116" viewBox="0 0 2763 1116" font-family="Segoe UI, Arial, sans-serif" fill="#15221f">
+<defs><marker id="f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#15221f"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="24" y="38" font-size="26" font-weight="700">Proceso 1 · Consulta de disponibilidad y traslado entre sucursales</text>
+<text x="24" y="66" font-size="16" fill="#5b6965">Todo empieza cuando un cliente pide algo al Vendedor. Origen: BPMN de U2.</text>
+<rect x="0" y="96" width="2763" height="190" fill="#f3f6f4" stroke="#9fb0aa"/>
+<rect x="0" y="96" width="64" height="190" fill="#0c3a33"/>
+<text transform="translate(34.0 191.0) rotate(-90)" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="700" fill="#eef7f4">CLIENTE</text>
+<rect x="0" y="286" width="2763" height="570" fill="#ffffff" stroke="#9fb0aa"/>
+<rect x="0" y="286" width="64" height="570" fill="#0c3a33"/>
+<text transform="translate(34.0 571.0) rotate(-90)" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="700" fill="#eef7f4">VENDEDOR</text>
+<rect x="0" y="856" width="2763" height="190" fill="#f3f6f4" stroke="#9fb0aa"/>
+<rect x="0" y="856" width="64" height="190" fill="#0c3a33"/>
+<text transform="translate(34.0 951.0) rotate(-90)" text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="700" fill="#eef7f4">ALMACÉN</text>
+<polyline points="211,206 211,367 383,367" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="579,367 644,367" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="858,367 1994,367" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="751,423 751,557 914,557" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="1128,557 1193,557" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="1021,501 1021,206" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="1389,557 1561,557 1561,901" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="1659,937 1733,937" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="1929,937 1971,937 1971,367 1994,367" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="2208,367 2435,367" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="2101,423 2101,557 2435,557" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<polyline points="2101,423 2101,747 2435,747" fill="none" stroke="#15221f" stroke-width="1.8" stroke-linejoin="round" marker-end="url(#f)"/>
+<rect x="113.0" y="148.0" width="196" height="58" rx="29.0" fill="#e3f4ea" stroke="#1f7a3d" stroke-width="2"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="700"><tspan x="211" y="177">Solicitud del cliente</tspan></text>
+<rect x="383.0" y="331.0" width="196" height="72" rx="9" fill="#ffffff" stroke="#0c3a33" stroke-width="1.6"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="481" y="348">Consultar</tspan><tspan x="481" y="367">disponibilidad del</tspan><tspan x="481" y="386">producto en el sistema</tspan></text>
+<line x1="481" y1="403.0" x2="481" y2="417.0" stroke="#5b6965" stroke-dasharray="4 3"/>
+<path d="M395 417.0 h160 l12 12 v36 h-172z" fill="#ffffff" stroke="#5b6965"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="13"><tspan x="481" y="437">Ficha de producto (SKU)</tspan></text>
+<polygon points="751,311.0 858.0,367.0 751,423.0 644.0,367.0" fill="#fdf3d0" stroke="#8a6d1a" stroke-width="1.8"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="751" y="358">¿Hay en la</tspan><tspan x="751" y="376">tienda local?</tspan></text>
+<polygon points="1021,501.0 1128.0,557.0 1021,613.0 914.0,557.0" fill="#fdf3d0" stroke="#8a6d1a" stroke-width="1.8"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="1021" y="548">¿Hay en otra</tspan><tspan x="1021" y="566">sucursal?</tspan></text>
+<rect x="1193.0" y="521.0" width="196" height="72" rx="9" fill="#ffffff" stroke="#0c3a33" stroke-width="1.6"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="1291" y="548">Solicitar transferencia</tspan><tspan x="1291" y="566">entre sucursales</tspan></text>
+<rect x="923.0" y="148.0" width="196" height="58" rx="29.0" fill="#fbe3df" stroke="#a63a2b" stroke-width="4"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16" font-weight="700"><tspan x="1021" y="168">Cancelado: sin</tspan><tspan x="1021" y="186">existencias</tspan></text>
+<rect x="1463.0" y="901.0" width="196" height="72" rx="9" fill="#ffffff" stroke="#0c3a33" stroke-width="1.6"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="1561" y="928">Escanear la serie y</tspan><tspan x="1561" y="946">despachar el paquete</tspan></text>
+<line x1="1561" y1="973.0" x2="1561" y2="987.0" stroke="#5b6965" stroke-dasharray="4 3"/>
+<path d="M1475 987.0 h160 l12 12 v36 h-172z" fill="#ffffff" stroke="#5b6965"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="13"><tspan x="1561" y="1007">Guía de traslado</tspan></text>
+<rect x="1733.0" y="901.0" width="196" height="72" rx="9" fill="#ffffff" stroke="#0c3a33" stroke-width="1.6"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="1831" y="928">Confirmar la recepción</tspan><tspan x="1831" y="946">escaneando la serie</tspan></text>
+<polygon points="2101,311.0 2208.0,367.0 2101,423.0 1994.0,367.0" fill="#fdf3d0" stroke="#8a6d1a" stroke-width="1.8"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="2101" y="358">¿Qué solicita</tspan><tspan x="2101" y="376">el cliente?</tspan></text>
+<rect x="2435.0" y="331.0" width="196" height="72" rx="9" fill="#e0edfb" stroke="#1d5fa8" stroke-width="1.8"/>
+<rect x="2440.0" y="336.0" width="186" height="62" rx="6" fill="none" stroke="#1d5fa8" stroke-width="1"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="2533" y="358">Proceso 2: Venta</tspan><tspan x="2533" y="376">directa</tspan></text>
+<rect x="2435.0" y="521.0" width="196" height="72" rx="9" fill="#e0edfb" stroke="#1d5fa8" stroke-width="1.8"/>
+<rect x="2440.0" y="526.0" width="186" height="62" rx="6" fill="none" stroke="#1d5fa8" stroke-width="1"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="2533" y="557">Proceso 3: Apartado</tspan></text>
+<rect x="2435.0" y="711.0" width="196" height="72" rx="9" fill="#e0edfb" stroke="#1d5fa8" stroke-width="1.8"/>
+<rect x="2440.0" y="716.0" width="186" height="62" rx="6" fill="none" stroke="#1d5fa8" stroke-width="1"/>
+<text text-anchor="middle" dominant-baseline="central" font-size="16"><tspan x="2533" y="747">Proceso 4: Devolución</tspan></text>
+<text x="870" y="357" font-size="15" font-weight="700" text-anchor="start" paint-order="stroke" stroke="#ffffff" stroke-width="5">Sí</text>
+<text x="761" y="445" font-size="15" font-weight="700" text-anchor="start" paint-order="stroke" stroke="#ffffff" stroke-width="5">No</text>
+<text x="1140" y="547" font-size="15" font-weight="700" text-anchor="start" paint-order="stroke" stroke="#ffffff" stroke-width="5">Sí</text>
+<text x="1031" y="491" font-size="15" font-weight="700" text-anchor="start" paint-order="stroke" stroke="#ffffff" stroke-width="5">No</text>
+<text x="2220" y="357" font-size="15" font-weight="700" text-anchor="start" paint-order="stroke" stroke="#ffffff" stroke-width="5">Venta directa</text>
+<text x="2113" y="547" font-size="15" font-weight="700" text-anchor="start" paint-order="stroke" stroke="#ffffff" stroke-width="5">Apartado</text>
+<text x="2113" y="737" font-size="15" font-weight="700" text-anchor="start" paint-order="stroke" stroke="#ffffff" stroke-width="5">Devolución</text>
+<rect x="24" y="1082" width="34" height="18" rx="9" fill="#e3f4ea" stroke="#1f7a3d" stroke-width="2"/><text x="66" y="1096" font-size="14" fill="#5b6965">Inicio</text><rect x="140" y="1082" width="34" height="18" rx="4" fill="#ffffff" stroke="#0c3a33" stroke-width="1.6"/><text x="182" y="1096" font-size="14" fill="#5b6965">Actividad</text><rect x="280" y="1082" width="34" height="18" rx="4" fill="#fdf3d0" stroke="#8a6d1a" stroke-width="1.8"/><text x="322" y="1096" font-size="14" fill="#5b6965">Decisión</text><rect x="412" y="1082" width="34" height="18" rx="9" fill="#fbe3df" stroke="#a63a2b" stroke-width="2"/><text x="454" y="1096" font-size="14" fill="#5b6965">Fin</text><rect x="504" y="1082" width="34" height="18" rx="4" fill="#e0edfb" stroke="#1d5fa8" stroke-width="1.8"/><text x="546" y="1096" font-size="14" fill="#5b6965">Pasa a otro proceso</text>
+</svg>
