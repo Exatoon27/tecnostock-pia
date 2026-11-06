@@ -1,0 +1,42 @@
+# TecnoStock: base de datos + aplicación + pruebas (12-Factor: todo por variables de entorno).
+#   docker compose up --build                       -> BD + app en http://localhost:8000
+#   docker compose --profile tests run --rm tests   -> pruebas contra PostgreSQL real
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-tecnostock}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-cambiar_en_produccion}
+      POSTGRES_DB: ${POSTGRES_DB:-tecnostock}
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+      - ./docker/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-tecnostock}:${POSTGRES_PASSWORD:-cambiar_en_produccion}@db:5432/${POSTGRES_DB:-tecnostock}
+      SEED_DATA: ${SEED_DATA:-1}
+    ports:
+      - "${APP_PORT:-8000}:8000"
+
+  tests:
+    build: .
+    profiles: ["tests"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      TEST_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-tecnostock}:${POSTGRES_PASSWORD:-cambiar_en_produccion}@db:5432/${POSTGRES_DB:-tecnostock}_test
+    command: ["pytest", "-q", "--cov=src", "--cov-fail-under=80"]
+
+volumes:
+  dbdata:
