@@ -64,7 +64,7 @@ Notas del plan gratuito: el servicio se apaga tras 15 minutos sin visitas y tard
 python -m venv .venv
 # Windows: .venv\Scripts\Activate.ps1   |   Linux/macOS: source .venv/bin/activate
 python -m pip install -r requirements.txt
-python -m pytest --cov=src --cov-fail-under=80    # 327 pasan y 4 (PostgreSQL) se omiten sin TEST_DATABASE_URL
+python -m pytest --cov=src --cov-fail-under=80    # 360 pasan y 4 (PostgreSQL) se omiten sin TEST_DATABASE_URL
 python -m ruff check src tests
 uvicorn src.api.main:app --reload                 # http://127.0.0.1:8000/
 ```
@@ -133,7 +133,7 @@ Las fechas se reciben en el cuerpo (`fecha`) para pruebas deterministas; por omi
 Las claves de Supervisor de demostración están en `datos/supervisores.csv` (ficticias).
 
 ### Calidad
-331 pruebas con PostgreSQL (327 sin él) · cobertura 99 % (umbral 80 %) · 57 casos en `docs/matriz_pruebas.csv` · escenarios E01–E20 idénticos en memoria y SQL · 14/14 mutaciones detectadas · CI en `.github/workflows/ci.yml`. Evidencias en `docs/evidencias_U5.md` y `docs/evidencias/`.
+364 pruebas con PostgreSQL (360 sin él) · cobertura 99 % (umbral 80 %) · 63 casos en `docs/matriz_pruebas.csv` · escenarios E01–E20 idénticos en memoria y SQL · 14/14 mutaciones detectadas · CI en `.github/workflows/ci.yml`. Evidencias en `docs/evidencias_U5.md` y `docs/evidencias/`.
 
 ### Límites conocidos
 - La autenticación es un encabezado `X-Rol` (no hay inicio de sesión real); la autorización por puesto y la clave del Supervisor sí se aplican.
