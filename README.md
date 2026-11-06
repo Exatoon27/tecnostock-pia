@@ -1,7 +1,7 @@
 # TecnoStock — Apartados, ventas y devoluciones
 
 **Producto Integrador de Aprendizaje (PIA)** · Componentes de Lógica de Negocio · FIME UANL · Equipo 5
-Repositorio: https://github.com/Exatoon27/tecnostock-pia · Sistema desplegado: _pendiente de publicar_
+Repositorio: https://github.com/Exatoon27/tecnostock-pia · Sistema desplegado: https://tecnostock-7k73.onrender.com (panel en `/`, Swagger en `/docs`; plan gratuito: si lleva un rato sin visitas, tarda en despertar)
 
 ---
 
@@ -53,7 +53,7 @@ La configuración va por variables de entorno (12-Factor). Copia `.env.example` 
 El archivo `render.yaml` describe la aplicación (con el `Dockerfile`) y su base PostgreSQL.
 1. Crear cuenta en [render.com](https://render.com) (se puede entrar con GitHub) y darle acceso a este repositorio.
 2. **New → Blueprint**, elegir el repositorio y confirmar. Render construye la imagen, crea la base y conecta ambas con `DATABASE_URL`.
-3. La URL pública abre el panel en `/` y Swagger en `/docs`. Anotarla arriba, en "Sistema desplegado".
+3. La URL pública abre el panel en `/` y Swagger en `/docs`. Ya está publicado en la dirección indicada arriba.
 
 Notas del plan gratuito: el servicio se apaga tras 15 minutos sin visitas y tarda en despertar (abrirlo antes de una demostración); la base gratuita expira a los 30 días.
 
