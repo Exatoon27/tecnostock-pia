@@ -247,3 +247,42 @@ class ConsultarStockGlobalQueryHandler:
         return [StockGlobalDTO(sku, suc, c[EstadoSerie.DISPONIBLE],
                                c[EstadoSerie.RESERVADO], c[EstadoSerie.VENDIDO])
                 for (sku, suc), c in sorted(cuenta.items())]
+
+
+class ConsultarPanelQueryHandler:
+    """Lado de lectura del panel: modelo plano con nombres en lugar de claves."""
+
+    def __init__(self, uow_factory: UowFactory) -> None:
+        self.uow_factory = uow_factory
+
+    def handle(self, hoy: date) -> dict:
+        with self.uow_factory() as uow:
+            items = {i.numero_serie.valor: i for i in uow.items.listar()}
+            clientes = {c.id: c for c in uow.clientes.listar()}
+            productos = {p.sku.valor: p for p in uow.productos.listar()}
+            apartados = uow.apartados.listar()
+
+        def desc(sku: str) -> str:
+            return productos[sku].descripcion if sku in productos else sku
+
+        return {
+            "hoy": hoy.isoformat(),
+            "apartados": [{
+                "folio": a.folio, "cliente_id": a.cliente_id,
+                "cliente": clientes[a.cliente_id].nombre if a.cliente_id in clientes else a.cliente_id,
+                "numero_serie": a.numero_serie.valor,
+                "producto": desc(items[a.numero_serie.valor].sku.valor) if a.numero_serie.valor in items else "",
+                "sucursal": a.sucursal.valor, "estado": a.estado.value,
+                "total": str(a.total), "pagado": str(a.pagado), "saldo": str(a.saldo),
+                "fecha_limite": a.fecha_limite.isoformat(),
+                "saldo_a_favor": str(a.saldo_a_favor) if a.saldo_a_favor else None,
+            } for a in apartados],
+            "clientes": [{"id": c.id, "nombre": c.nombre, "activo": c.activo}
+                         for c in clientes.values()],
+            "productos": [{"sku": p.sku.valor, "descripcion": p.descripcion,
+                           "precio": str(p.precio), "requiere_serie": p.requiere_serie,
+                           "habilitado": p.habilitado} for p in productos.values()],
+            "series": [{"numero_serie": i.numero_serie.valor, "sku": i.sku.valor,
+                        "producto": desc(i.sku.valor), "sucursal": i.sucursal.valor,
+                        "estado": i.estado.value} for i in items.values()],
+        }

@@ -4,9 +4,10 @@ from __future__ import annotations
 from dataclasses import asdict
 from datetime import date
 from decimal import Decimal
+from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, Query
-from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 
 from src.application.dto import (
@@ -105,6 +106,15 @@ def crear_app(c: Contenedor | None = None) -> FastAPI:
 
     def hoy(f: date | None) -> date:
         return f or date.today()
+
+    @app.get("/", include_in_schema=False)
+    def panel():
+        return FileResponse(Path(__file__).parent / "panel.html")
+
+    @app.get("/panel/datos", include_in_schema=False,
+             dependencies=[requiere(Accion.CONSULTAR_PANEL)])
+    def panel_datos():
+        return c.panel.handle(date.today())
 
     @app.get("/stock", dependencies=[requiere(Accion.CONSULTAR_STOCK)])
     def stock(sku: str | None = Query(None), sucursal_id: str | None = Query(None)):

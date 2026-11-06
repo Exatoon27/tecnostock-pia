@@ -66,6 +66,7 @@ class _ItemsMem(IItemSerieRepository):
 class _ApartadosMem(IApartadoRepository):
     def __init__(self, a: Almacen): self.a = a
     def find_by_id(self, folio): return self.a.apartados.get(folio)
+    def listar(self): return sorted(self.a.apartados.values(), key=lambda x: x.folio)
     def save(self, apartado): self.a.apartados[apartado.folio] = apartado
 
     def get_vencidos(self, fecha_corte: date):
@@ -92,11 +93,13 @@ class _VentasMem(IVentaRepository):
 class _ClientesMem(IClienteRepository):
     def __init__(self, a: Almacen): self.a = a
     def find_by_id(self, cliente_id): return self.a.clientes.get(cliente_id)
+    def listar(self): return sorted(self.a.clientes.values(), key=lambda x: x.id)
 
 
 class _ProductosMem(IProductoRepository):
     def __init__(self, a: Almacen): self.a = a
     def find_by_sku(self, sku: SKU): return self.a.productos.get(sku.valor)
+    def listar(self): return sorted(self.a.productos.values(), key=lambda x: x.sku.valor)
 
 
 class SupervisorAuthMemoria(ISupervisorAuthDomainService):

@@ -17,10 +17,17 @@ python -m pytest --cov=src --cov-fail-under=80
 python -m ruff check src tests
 python tools/generar_matriz.py        # matriz de casos con resultado real
 python tools/ci_local.py              # mismos pasos que .github/workflows/ci.yml
-uvicorn src.api.main:app --reload     # http://127.0.0.1:8000/docs
+uvicorn src.api.main:app --reload     # panel: http://127.0.0.1:8000/  ·  API: /docs
 ```
 Persistencia: sin configurar usa **memoria**; con `DATABASE_URL=sqlite+pysqlite:///./tecnostock.db`
 (ver `.env.example`) usa **SQLAlchemy**. Las peticiones llevan `X-Rol: CAJERO|VENDEDOR|SUPERVISOR|ALMACEN|...`.
+
+## Panel para el negocio y API para Sistemas
+- `/` es el **panel** para quien opera la tienda (Cajero, Vendedor, Supervisor, Almacén): apartados, abonos, entregas,
+  ventas, devoluciones e inventario, todo en lenguaje de negocio. Nunca muestra códigos técnicos: los errores del sistema
+  se traducen a mensajes como "El puesto de Almacén no tiene permiso para esta operación".
+- `/docs` (OpenAPI) y la tabla de la sección API son para el **equipo de TI**.
+- El puesto se elige arriba a la derecha; el panel lo envía como `X-Rol` (sustituto de autenticación, ver Límites).
 
 ## Estructura
 ```

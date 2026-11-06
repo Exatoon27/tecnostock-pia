@@ -12,6 +12,7 @@ from sqlalchemy.orm import sessionmaker
 from src.application.manejadores import ApartadoVencidoEventHandler
 from src.application.servicios import (
     ApartadoApplicationService,
+    ConsultarPanelQueryHandler,
     ConsultarStockGlobalQueryHandler,
     DevolucionApplicationService,
     VentaApplicationService,
@@ -44,6 +45,7 @@ class Contenedor:
     ventas: VentaApplicationService
     devoluciones: DevolucionApplicationService
     stock: ConsultarStockGlobalQueryHandler
+    panel: ConsultarPanelQueryHandler
     notificaciones: ApartadoVencidoEventHandler
     almacen: Almacen | None = None          # sólo con persistencia en memoria
     sesiones: sessionmaker | None = None    # sólo con SQL
@@ -56,7 +58,8 @@ def _armar(bus, fabrica, politica, pasarela, **extra) -> Contenedor:
         bus, fabrica, ApartadoApplicationService(fabrica),
         VentaApplicationService(fabrica, pasarela or PasarelaSimulada()),
         DevolucionApplicationService(fabrica, politica),
-        ConsultarStockGlobalQueryHandler(fabrica), notif, **extra)
+        ConsultarStockGlobalQueryHandler(fabrica),
+        ConsultarPanelQueryHandler(fabrica), notif, **extra)
 
 
 def construir(almacen: Almacen | None = None,

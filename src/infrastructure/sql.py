@@ -219,6 +219,10 @@ class _ApartadosSql(_Repos, IApartadoRepository):
         r = self.s.get(ApartadoRow, folio)
         return self._ver(_apartado_de(r)) if r else None
 
+    def listar(self):
+        return [self._ver(_apartado_de(r)) for r in
+                self.s.scalars(select(ApartadoRow).order_by(ApartadoRow.folio))]
+
     def get_vencidos(self, fecha_corte):
         limite = fecha_corte - timedelta(days=VIGENCIA_DIAS)   # creado < corte-30
         q = select(ApartadoRow).where(
@@ -277,12 +281,20 @@ class _ClientesSql(_Repos, IClienteRepository):
         r = self.s.get(ClienteRow, cliente_id)
         return Cliente(r.id, r.nombre, r.telefono, r.correo, r.activo) if r else None
 
+    def listar(self):
+        return [Cliente(r.id, r.nombre, r.telefono, r.correo, r.activo)
+                for r in self.s.scalars(select(ClienteRow).order_by(ClienteRow.id))]
+
 
 class _ProductosSql(_Repos, IProductoRepository):
     def find_by_sku(self, sku):
         r = self.s.get(ProductoRow, sku.valor)
         return Producto(SKU(r.sku), r.descripcion, MontoMonetario(r.precio),
                         r.requiere_serie, r.habilitado) if r else None
+
+    def listar(self):
+        return [self.find_by_sku(SKU(r.sku)) for r in
+                self.s.scalars(select(ProductoRow).order_by(ProductoRow.sku))]
 
 
 class SupervisorAuthSql(ISupervisorAuthDomainService):

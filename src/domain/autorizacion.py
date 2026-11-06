@@ -24,6 +24,7 @@ class Rol(str, Enum):
 
 class Accion(str, Enum):
     CONSULTAR_STOCK = "CONSULTAR_STOCK"
+    CONSULTAR_PANEL = "CONSULTAR_PANEL"
     CONSULTAR_APARTADO = "CONSULTAR_APARTADO"
     CREAR_APARTADO = "CREAR_APARTADO"
     REGISTRAR_ABONO = "REGISTRAR_ABONO"
@@ -36,6 +37,8 @@ class Accion(str, Enum):
 _R, _A = Rol, Accion
 PERMISOS: dict[Accion, frozenset[Rol]] = {
     _A.CONSULTAR_STOCK: frozenset({_R.VENDEDOR, _R.CAJERO, _R.SUPERVISOR,
+                                   _R.ALMACEN, _R.ADMINISTRADOR}),
+    _A.CONSULTAR_PANEL: frozenset({_R.VENDEDOR, _R.CAJERO, _R.SUPERVISOR,
                                    _R.ALMACEN, _R.ADMINISTRADOR}),
     _A.CONSULTAR_APARTADO: frozenset({_R.VENDEDOR, _R.CAJERO, _R.SUPERVISOR,
                                       _R.ADMINISTRADOR}),
