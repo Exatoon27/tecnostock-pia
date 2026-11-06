@@ -49,6 +49,14 @@ La configuración va por variables de entorno (12-Factor). Copia `.env.example` 
 | `/` | Panel del negocio |
 | `/docs` · `/openapi.json` | Documentación técnica de la API (Swagger) |
 
+### Despliegue en Render (plan gratuito)
+El archivo `render.yaml` describe la aplicación (con el `Dockerfile`) y su base PostgreSQL.
+1. Crear cuenta en [render.com](https://render.com) (se puede entrar con GitHub) y darle acceso a este repositorio.
+2. **New → Blueprint**, elegir el repositorio y confirmar. Render construye la imagen, crea la base y conecta ambas con `DATABASE_URL`.
+3. La URL pública abre el panel en `/` y Swagger en `/docs`. Anotarla arriba, en "Sistema desplegado".
+
+Notas del plan gratuito: el servicio se apaga tras 15 minutos sin visitas y tarda en despertar (abrirlo antes de una demostración); la base gratuita expira a los 30 días.
+
 ### Sin Docker
 ```bash
 python -m venv .venv

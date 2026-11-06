@@ -91,9 +91,18 @@ def construir_sql(url: str = "sqlite+pysqlite:///:memory:",
     return contenedor
 
 
+def normalizar_url(url: str) -> str:
+    """Los proveedores (Render, Heroku...) entregan postgres:// o postgresql://;
+    SQLAlchemy necesita nombrar el driver instalado (psycopg 3)."""
+    for prefijo in ("postgres://", "postgresql://"):
+        if url.startswith(prefijo):
+            return "postgresql+psycopg://" + url[len(prefijo):]
+    return url
+
+
 def construir_desde_entorno() -> Contenedor:
     """DATABASE_URL definida -> SQL; si no, memoria (12-Factor)."""
     url = os.getenv("DATABASE_URL")
     if url:
-        return construir_sql(url, sembrar_datos=os.getenv("SEED_DATA", "1") == "1")
+        return construir_sql(normalizar_url(url), sembrar_datos=os.getenv("SEED_DATA", "1") == "1")
     return construir()

@@ -248,6 +248,17 @@ def test_venta_directa_sobre_sql_genera_ticket_consecutivo(sc):
     assert estado_serie(sc, "SN-MON-0001") == EstadoSerie.VENDIDO
 
 
+@pytest.mark.parametrize("entrada, esperado", [
+    ("postgres://u:p@h/db", "postgresql+psycopg://u:p@h/db"),
+    ("postgresql://u:p@h:5432/db", "postgresql+psycopg://u:p@h:5432/db"),
+    ("postgresql+psycopg://u:p@h/db", "postgresql+psycopg://u:p@h/db"),
+    ("sqlite+pysqlite:///:memory:", "sqlite+pysqlite:///:memory:"),
+])
+def test_url_de_proveedor_se_adapta_al_driver_instalado(entrada, esperado):
+    from src.infrastructure.contenedor import normalizar_url
+    assert normalizar_url(entrada) == esperado
+
+
 def test_configuracion_por_entorno_elige_la_persistencia(monkeypatch):
     from src.infrastructure.contenedor import construir_desde_entorno
     monkeypatch.delenv("DATABASE_URL", raising=False)
