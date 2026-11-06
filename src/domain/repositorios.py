@@ -7,6 +7,7 @@ from datetime import date
 from src.domain.apartado import Apartado
 from src.domain.entidades import Cliente, Producto
 from src.domain.item_serie import ItemSerie
+from src.domain.transferencia import Transferencia
 from src.domain.valores import SKU, NumeroSerie
 from src.domain.venta import Venta
 
@@ -33,6 +34,17 @@ class IApartadoRepository(ABC):
     def siguiente_folio(self) -> str: ...
     @abstractmethod
     def save(self, apartado: Apartado) -> None: ...
+
+
+class ITransferenciaRepository(ABC):
+    @abstractmethod
+    def find_by_id(self, folio: str) -> Transferencia | None: ...
+    @abstractmethod
+    def listar(self) -> list[Transferencia]: ...
+    @abstractmethod
+    def siguiente_folio(self) -> str: ...
+    @abstractmethod
+    def save(self, transferencia: Transferencia) -> None: ...
 
 
 class IVentaRepository(ABC):
@@ -63,6 +75,7 @@ class IUnitOfWork(ABC):
     items: IItemSerieRepository
     apartados: IApartadoRepository
     ventas: IVentaRepository
+    transferencias: ITransferenciaRepository
     clientes: IClienteRepository
     productos: IProductoRepository
 

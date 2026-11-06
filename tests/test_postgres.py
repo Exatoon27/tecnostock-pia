@@ -47,3 +47,19 @@ def test_un_rechazo_no_deja_la_serie_bloqueada(api):
     serie = next(s for s in api.get("/panel/datos").json()["series"]
                  if s["numero_serie"] == "SN-LAP-0002")
     assert serie["estado"] == "DISPONIBLE"
+
+
+def test_traslado_completo_en_postgres(api):
+    r = api.post("/transferencias", headers={"X-Rol": "VENDEDOR"},
+                 json={"numero_serie": "SN-LAP-0003", "sucursal_destino": "SUC-01"})
+    assert r.status_code == 201
+    folio = r.json()["folio"]
+    alm = {"X-Rol": "ALMACEN"}
+    assert api.post(f"/transferencias/{folio}/despacho", headers=alm,
+                    json={"numero_serie": "SN-LAP-0003"}).status_code == 200
+    assert api.post(f"/transferencias/{folio}/recepcion", headers=alm,
+                    json={"numero_serie": "SN-LAP-0003", "sucursal_id": "SUC-01"}
+                    ).json()["estado"] == "RECIBIDA"
+    serie = next(s for s in api.get("/panel/datos").json()["series"]
+                 if s["numero_serie"] == "SN-LAP-0003")
+    assert (serie["estado"], serie["sucursal"]) == ("DISPONIBLE", "SUC-01")

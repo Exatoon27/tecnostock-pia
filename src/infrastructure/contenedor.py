@@ -15,6 +15,7 @@ from src.application.servicios import (
     ConsultarPanelQueryHandler,
     ConsultarStockGlobalQueryHandler,
     DevolucionApplicationService,
+    TransferenciaApplicationService,
     VentaApplicationService,
 )
 from src.domain.devolucion import PoliticaDevolucionDomainService
@@ -44,6 +45,7 @@ class Contenedor:
     apartados: ApartadoApplicationService
     ventas: VentaApplicationService
     devoluciones: DevolucionApplicationService
+    transferencias: TransferenciaApplicationService
     stock: ConsultarStockGlobalQueryHandler
     panel: ConsultarPanelQueryHandler
     notificaciones: ApartadoVencidoEventHandler
@@ -58,6 +60,7 @@ def _armar(bus, fabrica, politica, pasarela, **extra) -> Contenedor:
         bus, fabrica, ApartadoApplicationService(fabrica),
         VentaApplicationService(fabrica, pasarela or PasarelaSimulada()),
         DevolucionApplicationService(fabrica, politica),
+        TransferenciaApplicationService(fabrica),
         ConsultarStockGlobalQueryHandler(fabrica),
         ConsultarPanelQueryHandler(fabrica), notif, **extra)
 

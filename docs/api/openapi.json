@@ -466,6 +466,239 @@
           }
         }
       }
+    },
+    "/transferencias": {
+      "post": {
+        "summary": "Solicitar Traslado",
+        "operationId": "solicitar_traslado_transferencias_post",
+        "parameters": [
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Rol"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrasladoIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transferencias/{folio}": {
+      "get": {
+        "summary": "Obtener Traslado",
+        "operationId": "obtener_traslado_transferencias__folio__get",
+        "parameters": [
+          {
+            "name": "folio",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Folio"
+            }
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Rol"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transferencias/{folio}/despacho": {
+      "post": {
+        "summary": "Despachar Traslado",
+        "operationId": "despachar_traslado_transferencias__folio__despacho_post",
+        "parameters": [
+          {
+            "name": "folio",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Folio"
+            }
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Rol"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DespachoIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/transferencias/{folio}/recepcion": {
+      "post": {
+        "summary": "Recibir Traslado",
+        "operationId": "recibir_traslado_transferencias__folio__recepcion_post",
+        "parameters": [
+          {
+            "name": "folio",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Folio"
+            }
+          },
+          {
+            "name": "x-rol",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Rol"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecepcionIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -554,6 +787,19 @@
           "anticipo"
         ],
         "title": "ApartadoIn"
+      },
+      "DespachoIn": {
+        "properties": {
+          "numero_serie": {
+            "type": "string",
+            "title": "Numero Serie"
+          }
+        },
+        "type": "object",
+        "required": [
+          "numero_serie"
+        ],
+        "title": "DespachoIn"
       },
       "DevolucionIn": {
         "properties": {
@@ -671,6 +917,54 @@
           "monto"
         ],
         "title": "PagoIn"
+      },
+      "RecepcionIn": {
+        "properties": {
+          "numero_serie": {
+            "type": "string",
+            "title": "Numero Serie"
+          },
+          "sucursal_id": {
+            "type": "string",
+            "title": "Sucursal Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "numero_serie",
+          "sucursal_id"
+        ],
+        "title": "RecepcionIn"
+      },
+      "TrasladoIn": {
+        "properties": {
+          "numero_serie": {
+            "type": "string",
+            "title": "Numero Serie"
+          },
+          "sucursal_destino": {
+            "type": "string",
+            "title": "Sucursal Destino"
+          },
+          "fecha": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha"
+          }
+        },
+        "type": "object",
+        "required": [
+          "numero_serie",
+          "sucursal_destino"
+        ],
+        "title": "TrasladoIn"
       },
       "ValidationError": {
         "properties": {

@@ -7,14 +7,14 @@ Estado: **Implementado** · **Parcial** (se explica qué falta) · **No implemen
 
 | Historia | Regla | Componente (código) | Pruebas | Estado |
 |---|---|---|---|---|
-| US-01 Consultar disponibilidad en las 5 tiendas | RN-22 · N-01 · CON-01 | `ConsultarStockGlobalQueryHandler`, `GET /stock`, panel › Inventario | `test_stock_query`, `test_stock_global_agrupa_por_sku_y_sucursal`, `test_stock_global_filtra_por_sucursal_y_no_modifica`, `test_consulta_de_stock_sobre_sql` | **Parcial**: muestra disponibles, reservadas y vendidas; no hay "En tránsito" (sin traslados) y el tiempo de 3 s no se midió |
+| US-01 Consultar disponibilidad en las 5 tiendas | RN-22 · N-01 · CON-01 | `ConsultarStockGlobalQueryHandler`, `GET /stock` (disponibles, reservadas y en tránsito), panel › Inventario | `test_stock_query`, `test_stock_global_agrupa_por_sku_y_sucursal`, `test_stock_global_filtra_por_sucursal_y_no_modifica`, `test_consulta_de_stock_sobre_sql`, CP-54, CP-55 | **Implementado** (la prueba CP-55 verifica que responde en menos de 3 s con los datos de demostración) |
 | US-02 Vender capturando la serie | RN-12 · N-03 | `Venta.cerrar`, `NumeroSerie`, `VentaApplicationService.procesar_venta_directa` | CP-22, CP-23, E13 | **Implementado** (la serie se elige/captura; no hay lector de código de barras) |
 | US-03 Apartar con anticipo mínimo de 20 % | RN-01 · RN-21 · N-02 | `Apartado.crear`, `PorcentajeAnticipo`, `AnticipoMinimoSpec`, `ApartadoApplicationService.crear_apartado` | CP-01 a CP-04, CP-41, CP-45, CP-46, E01, E02 | **Implementado** |
 | US-04 Bloquear la pieza al apartar | RN-05 · N-02 | `ItemSerie.bloquear_para_reserva`, `SerieDisponibleSpec` | CP-16, CP-19, E01, E05 | **Implementado** |
 | US-05 Liberar el producto por vencimiento | RN-02 · RN-03 | `Apartado.evaluar_vencimiento`, `procesar_vencimientos`, `ApartadoVencidoEventHandler` | CP-05 a CP-09, E09, E10, E11 | **Parcial**: la regla completa funciona, pero se ejecuta a demanda (botón o `POST /procesos/vencimientos`), sin programador nocturno; el aviso es simulado |
 | US-06 Recibir avisos a 5 y 2 días | RN-06 · N-06 | — | — | **No implementado** |
-| US-07 Solicitar traslado entre sucursales | RN-15 · N-05 | — (en el diseño U3: `Transferencia`) | — | **No implementado** |
-| US-08 Confirmar salida y llegada con escaneo | RN-15 · N-05 | — | — | **No implementado** |
+| US-07 Solicitar traslado entre sucursales | RN-15 · N-05 | `Transferencia.solicitar`, `ItemSerie.reservar_para_traslado`, `TransferenciaApplicationService.solicitar`, `POST /transferencias`, panel › Traslados | CP-48 a CP-50, CP-56, E16, E17 | **Implementado** |
+| US-08 Confirmar salida y llegada con escaneo | RN-15 · N-05 | `Transferencia.despachar` y `recibir`, `ItemSerie.despachar` y `recibir`, `POST /transferencias/{folio}/despacho` y `/recepcion` | CP-48, CP-51 a CP-53, CP-57, E18, E19, E20 | **Implementado** (guía GT-xxxx al despachar; segundo escaneo al recibir) |
 | US-09 Solicitar autorización para devolver | RN-07 | `PoliticaDevolucionDomainService`, `DentroDePlazoSpec`, `DEVOLUCION_ELEGIBLE` | CP-24, CP-28, E14, E15 | **Implementado** |
 | US-10 El Supervisor autoriza o niega | RN-07 · RN-08 · CON-02 | `ISupervisorAuthDomainService`, `EmpaqueCompletoSpec`, `DanoClienteSpec` | CP-25, CP-26, CP-27, CP-40, E14 | **Implementado** (nota de crédito; el cambio directo no se distingue) |
 | US-11 Escanear series al recibir mercancía | RN-11 · RN-16 | PK de `ItemSerie` (serie única), carga inicial por CSV | CP-18 | **Parcial**: la serie no puede repetirse, pero no existe el proceso de recepción de lotes |
@@ -23,19 +23,19 @@ Estado: **Implementado** · **Parcial** (se explica qué falta) · **No implemen
 | US-14 Operar sin conexión | RN-20 · CON-05 | — | — | **No implementado** |
 | US-15 Reportes e indicadores | — (no hay regla propia en el levantamiento) | — | — | **No implementado** |
 
-**Resumen:** 6 implementadas, 3 parciales, 6 no implementadas.
+**Resumen:** 9 implementadas, 2 parciales y 4 no implementadas.
 
 ## 2. Necesidades, restricciones y criterios de éxito
 
 | Elemento | Cómo lo cubre la solución | Pruebas / evidencia | Estado |
 |---|---|---|---|
-| N-01 Stock global | `GET /stock`, panel › Inventario | ver US-01 | Parcial |
+| N-01 Stock global | `GET /stock`, panel › Inventario | ver US-01 | Implementado |
 | N-02 Bloqueo por apartado | `Apartado` + `ItemSerie` en una sola operación atómica | CP-16, CP-19, CP-31, E01, E05 | Implementado |
 | N-03 Serie obligatoria | `Venta.cerrar`, serie única | CP-18, CP-22, CP-23 | Implementado |
 | N-04 Devoluciones controladas | `PoliticaDevolucionDomainService` | CP-24 a CP-28 | Implementado |
-| N-05 Traslados entre tiendas | — | — | No implementado |
+| N-05 Traslados entre tiendas | `Transferencia`, `TransferenciaApplicationService`, panel › Traslados | CP-48 a CP-57, E16 a E20 | Implementado |
 | N-06 Avisos de vencimiento | solo aviso simulado al vencer | `test_vencimiento_libera_serie_penaliza_y_notifica` | No implementado (a 5 y 2 días) |
-| CON-01 Respuesta < 3 s | consultas de lectura separadas (CQRS) | no medido | Sin evidencia |
+| CON-01 Respuesta < 3 s | consultas de lectura separadas (CQRS) | CP-55 (con los datos de demostración) | Cubierto en pruebas |
 | CON-02 Solo el Supervisor autoriza | matriz de permisos por puesto + clave | CP-27, CP-38, CP-40 | Implementado |
 | CON-03 No cerrar sin serie | `Venta.cerrar` | CP-22 | Implementado |
 | CON-04 Datos personales | sin datos reales en el repositorio; el cliente exige nombre, teléfono y correo | CP-46 | Parcial (sin cifrado) |
@@ -56,5 +56,5 @@ Estas diferencias son intencionales y están justificadas en [`trazabilidad_y_di
 
 - **Tecnología:** el código es **Python con FastAPI y SQLAlchemy** y la base de datos es **PostgreSQL**. Cualquier mención de SQL Server, Dapper o C# en documentos anteriores era ilustrativa y no corresponde a la implementación.
 - **Nombres:** el modelo de lectura del stock se llama `StockGlobalDTO` (no `StockGlobalReadModelDTO`).
-- **No existen todavía** `Transferencia`, `ITransferenciaRepository` ni `InventarioApplicationService`; pertenecen a los traslados (US-07 y US-08).
+- **Traslados (CU-04):** ya existen `Transferencia` e `ITransferenciaRepository`. El servicio de aplicación se llama `TransferenciaApplicationService` (en el diseño de U3 se nombró `InventarioApplicationService`).
 - Se añadieron `Cliente` y `Producto` y varias consultas a los repositorios (`listar()`, `contar_activos()`, etc.).

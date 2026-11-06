@@ -46,3 +46,13 @@ CP-44,OpenAPI documentado,PIA,GET /openapi.json,Contiene /apartados,exito,api,te
 CP-45,Anticipo no excede el total,US-03,total 1000.00 anticipo 1000.01,Rechazo que indica que excede el total,error,unitaria,test_dominio.py,test_anticipo_mayor_al_total_se_rechaza_con_mensaje_claro
 CP-46,Datos obligatorios del cliente,Levantamiento p.15,cliente sin telefono,Rechazo DatosInvalidos,error,unitaria,test_dominio.py,test_cliente_exige_nombre_telefono_y_correo
 CP-47,Configuracion por entorno,PIA 12-Factor,DATABASE_URL definida o ausente,SQL o memoria segun el entorno,exito,integracion,test_persistencia_sql.py,test_configuracion_por_entorno_elige_la_persistencia
+CP-48,Traslado entre sucursales,RN-15 / US-07 / US-08,pieza disponible SUC-01 trasladada a SUC-02,Pieza DISPONIBLE en SUC-02 al cerrar la recepcion,exito,integracion,test_traslados.py,test_ciclo_completo_deja_la_pieza_disponible_en_el_destino
+CP-49,Pieza apartada no se traslada,RN-15 / US-07,serie con apartado vigente,Rechazo y sin traslado creado,error,integracion,test_traslados.py,test_una_pieza_apartada_no_se_puede_trasladar
+CP-50,Destino distinto al origen,US-07,origen SUC-01 destino SUC-01,Rechazo: la sucursal destino debe ser distinta,error,unitaria,test_traslados.py,test_origen_y_destino_deben_ser_distintos
+CP-51,Escaneo de serie al despachar,US-08,serie escaneada distinta a la del traslado,Rechazo y el estado no cambia,error,unitaria,test_traslados.py,test_despachar_con_otra_serie_se_rechaza_sin_cambiar_el_estado
+CP-52,Recepcion solo en el destino,US-08,recibir en SUC-03 un traslado a SUC-02,Rechazo y sigue EN_TRANSITO,error,unitaria,test_traslados.py,test_recibir_en_otra_sucursal_se_rechaza
+CP-53,No se recibe antes de despachar,US-08,recibir un traslado pendiente de despacho,Rechazo por estado,limite,unitaria,test_traslados.py,test_no_se_recibe_antes_de_despachar
+CP-54,Existencias en transito y reservadas,US-01,stock tras solicitar y despachar,Cuenta reservadas y en transito por sucursal,exito,integracion,test_traslados.py,test_el_stock_muestra_piezas_en_transito_y_reservadas_para_traslado
+CP-55,Consulta de stock en menos de 3 s,CON-01,consulta global con los datos de demostracion,Responde en menos de 3 segundos,limite,integracion,test_traslados.py,test_la_consulta_de_stock_responde_en_menos_de_3_segundos
+CP-56,Un traslado activo por pieza,RN-15,dos traslados activos de la misma serie,La base rechaza el segundo,error,integracion,test_traslados.py,test_la_base_impide_dos_traslados_activos_de_la_misma_pieza
+CP-57,Permisos de traslado,CON-02 / RN-10,Vendedor o Cajero intenta despachar o recibir,403 Almacen y Supervisor si pueden,error,integracion,test_traslados.py,test_api_solo_almacen_o_supervisor_despachan_y_reciben

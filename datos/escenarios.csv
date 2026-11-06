@@ -14,3 +14,8 @@ E12,entregar_apartado,2026-11-03,folio=AP-0004;monto=723.20,ENTREGADO + serie VE
 E13,venta_directa,2026-11-05,serie=SN-LAP-0005;metodo=EFECTIVO,rechazo,Serie RESERVADA no se vende directo
 E14,devolucion,2026-11-05,ticket=V-0001;serie=SN-LAP-0011;clave=SUP-001,nota de credito + serie DISPONIBLE,Devolucion a 8 dias con Supervisor valido
 E15,devolucion,2026-11-05,ticket=V-0002;serie=SN-LAP-0012;clave=SUP-001,rechazo,Devolucion a 21 dias (>15)
+E16,solicitar_traslado,2026-11-06,serie=SN-LAP-0001;destino=SUC-02,TR-0001 pendiente + serie RESERVADO_TRASLADO,Pieza disponible en SUC-01 se pide a SUC-02
+E17,solicitar_traslado,2026-11-06,serie=SN-LAP-0005;destino=SUC-02,rechazo,Una pieza apartada no se puede trasladar
+E18,despachar_traslado,2026-11-06,serie=SN-LAP-0001;destino=SUC-02,EN_TRANSITO + guia GT-0001,Almacen despacha escaneando la serie
+E19,recibir_traslado,2026-11-06,serie=SN-LAP-0001;destino=SUC-02,serie DISPONIBLE en SUC-02,Ciclo completo: solicitud despacho y recepcion
+E20,despacho_serie_erronea,2026-11-06,serie=SN-LAP-0001;destino=SUC-02;escaneo=SN-LAP-0002,rechazo,Escanear otra serie al despachar no cambia nada

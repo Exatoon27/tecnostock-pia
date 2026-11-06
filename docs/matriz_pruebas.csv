@@ -36,7 +36,7 @@ CP-34,Pago con tarjeta aprobado,Alcance modulo de cobro,Mock pasarela devuelve T
 CP-35,Pago con tarjeta rechazado,Alcance modulo de cobro,Mock pasarela devuelve False,PagoRechazado y serie DISPONIBLE,error,integracion,test_pasarela_mock.py,test_pago_rechazado_lanza_error_y_no_vende_la_serie,1,PASSED
 CP-36,Pasarela caida,ASM-01 / CON-05,Mock lanza TimeoutError,ServicioNoDisponible y rollback,error,integracion,test_pasarela_mock.py,test_timeout_de_pasarela_es_servicio_no_disponible_y_hace_rollback,1,PASSED
 CP-37,Efectivo sin pasarela,Alcance modulo de cobro,pago en efectivo,La pasarela no se invoca,exito,integracion,test_pasarela_mock.py,test_efectivo_no_invoca_la_pasarela,1,PASSED
-CP-38,Matriz de autorizacion,CON-02 / Levantamiento p.11-12,8 roles x 8 acciones,Coincide con el oraculo,exito,unitaria,test_autorizacion.py,test_matriz_rol_accion,56,PASSED
+CP-38,Matriz de autorizacion,CON-02 / Levantamiento p.11-12,8 roles x 8 acciones,Coincide con el oraculo,exito,unitaria,test_autorizacion.py,test_matriz_rol_accion,91,PASSED
 CP-39,Autenticacion previa,Seguridad,sin X-Rol o rol desconocido,HTTP 401,error,api,test_autorizacion.py,test_api_sin_rol_401_y_rol_desconocido_401,1,PASSED
 CP-40,Autenticacion no es autorizacion,CON-02,CAJERO sin clave de Supervisor,403 sin clave y 201 con clave,error,api,test_autorizacion.py,test_cajero_con_rol_valido_aun_necesita_clave_de_supervisor,1,PASSED
 CP-41,API crear apartado,US-03,POST /apartados valido,HTTP 201,exito,api,test_api.py,test_crear_apartado_201,1,PASSED
@@ -46,3 +46,13 @@ CP-44,OpenAPI documentado,PIA,GET /openapi.json,Contiene /apartados,exito,api,te
 CP-45,Anticipo no excede el total,US-03,total 1000.00 anticipo 1000.01,Rechazo que indica que excede el total,error,unitaria,test_dominio.py,test_anticipo_mayor_al_total_se_rechaza_con_mensaje_claro,1,PASSED
 CP-46,Datos obligatorios del cliente,Levantamiento p.15,cliente sin telefono,Rechazo DatosInvalidos,error,unitaria,test_dominio.py,test_cliente_exige_nombre_telefono_y_correo,1,PASSED
 CP-47,Configuracion por entorno,PIA 12-Factor,DATABASE_URL definida o ausente,SQL o memoria segun el entorno,exito,integracion,test_persistencia_sql.py,test_configuracion_por_entorno_elige_la_persistencia,1,PASSED
+CP-48,Traslado entre sucursales,RN-15 / US-07 / US-08,pieza disponible SUC-01 trasladada a SUC-02,Pieza DISPONIBLE en SUC-02 al cerrar la recepcion,exito,integracion,test_traslados.py,test_ciclo_completo_deja_la_pieza_disponible_en_el_destino,1,PASSED
+CP-49,Pieza apartada no se traslada,RN-15 / US-07,serie con apartado vigente,Rechazo y sin traslado creado,error,integracion,test_traslados.py,test_una_pieza_apartada_no_se_puede_trasladar,1,PASSED
+CP-50,Destino distinto al origen,US-07,origen SUC-01 destino SUC-01,Rechazo: la sucursal destino debe ser distinta,error,unitaria,test_traslados.py,test_origen_y_destino_deben_ser_distintos,1,PASSED
+CP-51,Escaneo de serie al despachar,US-08,serie escaneada distinta a la del traslado,Rechazo y el estado no cambia,error,unitaria,test_traslados.py,test_despachar_con_otra_serie_se_rechaza_sin_cambiar_el_estado,1,PASSED
+CP-52,Recepcion solo en el destino,US-08,recibir en SUC-03 un traslado a SUC-02,Rechazo y sigue EN_TRANSITO,error,unitaria,test_traslados.py,test_recibir_en_otra_sucursal_se_rechaza,1,PASSED
+CP-53,No se recibe antes de despachar,US-08,recibir un traslado pendiente de despacho,Rechazo por estado,limite,unitaria,test_traslados.py,test_no_se_recibe_antes_de_despachar,1,PASSED
+CP-54,Existencias en transito y reservadas,US-01,stock tras solicitar y despachar,Cuenta reservadas y en transito por sucursal,exito,integracion,test_traslados.py,test_el_stock_muestra_piezas_en_transito_y_reservadas_para_traslado,1,PASSED
+CP-55,Consulta de stock en menos de 3 s,CON-01,consulta global con los datos de demostracion,Responde en menos de 3 segundos,limite,integracion,test_traslados.py,test_la_consulta_de_stock_responde_en_menos_de_3_segundos,1,PASSED
+CP-56,Un traslado activo por pieza,RN-15,dos traslados activos de la misma serie,La base rechaza el segundo,error,integracion,test_traslados.py,test_la_base_impide_dos_traslados_activos_de_la_misma_pieza,1,PASSED
+CP-57,Permisos de traslado,CON-02 / RN-10,Vendedor o Cajero intenta despachar o recibir,403 Almacen y Supervisor si pueden,error,integracion,test_traslados.py,test_api_solo_almacen_o_supervisor_despachan_y_reciben,1,PASSED

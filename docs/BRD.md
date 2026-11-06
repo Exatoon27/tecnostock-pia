@@ -106,20 +106,20 @@ Resumen de las 20 respuestas del levantamiento. La columna **Estado** indica qu�
 | RN-12 | Los productos con serie **no se venden sin ella** | Implementada |
 | RN-13 | Si se paga con varios métodos, la **suma debe ser exactamente el total** | Implementada |
 | RN-14 | Los pagos con tarjeta pasan por el banco: aprobado, rechazado o sin servicio | Implementada (banco simulado) |
-| RN-15 | Traslado: solicitud → pieza reservada → en tránsito → recepción con segundo escaneo | No implementada |
+| RN-15 | Traslado: solicitud → pieza reservada → en tránsito → recepción con segundo escaneo | Implementada |
 | RN-16 | En la recepción de mercancía se escanea cada serie; no se guarda el lote si falta alguna | No implementada (las series iniciales se cargan por archivo) |
 | RN-17 | Un ajuste de inventario requiere solicitud de Almacén y firma del Supervisor | No implementada |
 | RN-18 | La factura se genera en **máximo 24 horas** con las series vinculadas | No implementada |
 | RN-19 | Una pieza enviada a garantía con el proveedor sale del inventario vendible | No implementada |
 | RN-20 | Si se cae la red, la caja trabaja en modo local y sincroniza al volver | No implementada |
 | RN-21 | Un apartado exige datos del cliente (nombre, celular, correo) y de la pieza (SKU, serie, precio, anticipo, sucursal) | Implementada |
-| RN-22 | La consulta de existencias muestra, por tienda, las piezas disponibles, reservadas y en tránsito, y responde en menos de 3 segundos | Parcial (sin "en tránsito"; el tiempo no se midió) |
+| RN-22 | La consulta de existencias muestra, por tienda, las piezas disponibles, reservadas y en tránsito, y responde en menos de 3 segundos | Implementada (se prueba que responde en menos de 3 s con los datos de demostración) |
 
 ## 11. Qué incluye esta entrega y qué no
 
-**Funciona hoy:** ventas con serie y pagos combinados, apartados completos (anticipo, abonos, entrega, vencimiento y saldo a favor), devoluciones con clave de Supervisor, consulta de existencias y permisos por puesto. Se opera desde un **panel en lenguaje de negocio**; la parte técnica (API) queda para el equipo de Sistemas.
+**Funciona hoy:** ventas con serie y pagos combinados, apartados completos (anticipo, abonos, entrega, vencimiento y saldo a favor), devoluciones con clave de Supervisor, consulta de existencias, traslados entre sucursales con escaneo de serie (solicitud, despacho con guía y recepción) y permisos por puesto. Se opera desde un **panel en lenguaje de negocio**; la parte técnica (API) queda para el equipo de Sistemas.
 
-**Pendiente (planeado, no incluido):** traslados entre tiendas, avisos programados a 5 y 2 días, recepción de lotes, ajustes de inventario, facturación, garantías con proveedor, modo sin red y reportes. Cada uno aparece en la matriz de trazabilidad como "No implementado".
+**Pendiente (planeado, no incluido):** avisos programados a 5 y 2 días, recepción de lotes, ajustes de inventario, facturación, garantías con proveedor, modo sin red y reportes. Cada uno aparece en la matriz de trazabilidad como "No implementado" (o "Parcial").
 
 ## 12. Supuestos del equipo por validar con el cliente
 

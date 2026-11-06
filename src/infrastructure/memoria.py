@@ -18,9 +18,11 @@ from src.domain.repositorios import (
     IClienteRepository,
     IItemSerieRepository,
     IProductoRepository,
+    ITransferenciaRepository,
     IUnitOfWork,
     IVentaRepository,
 )
+from src.domain.transferencia import Transferencia
 from src.domain.valores import SKU, NumeroSerie
 from src.domain.venta import Venta
 
@@ -32,6 +34,7 @@ class Almacen:
         self.items: dict[str, ItemSerie] = {}
         self.apartados: dict[str, Apartado] = {}
         self.ventas: dict[str, Venta] = {}
+        self.transferencias: dict[str, Transferencia] = {}
         self.clientes: dict[str, Cliente] = {}
         self.productos: dict[str, Producto] = {}
         self.supervisores: dict[str, bool] = {}
@@ -83,6 +86,14 @@ class _ApartadosMem(IApartadoRepository):
         return f"AP-{len(self.a.apartados) + 1:04d}"
 
 
+class _TransferenciasMem(ITransferenciaRepository):
+    def __init__(self, a: Almacen): self.a = a
+    def find_by_id(self, folio): return self.a.transferencias.get(folio)
+    def listar(self): return sorted(self.a.transferencias.values(), key=lambda x: x.folio)
+    def save(self, t): self.a.transferencias[t.folio] = t
+    def siguiente_folio(self): return f"TR-{len(self.a.transferencias) + 1:04d}"
+
+
 class _VentasMem(IVentaRepository):
     def __init__(self, a: Almacen): self.a = a
     def find_by_id(self, ticket_id): return self.a.ventas.get(ticket_id)
@@ -113,6 +124,7 @@ class UnidadDeTrabajoMemoria(IUnitOfWork):
         self.items = _ItemsMem(almacen)
         self.apartados = _ApartadosMem(almacen)
         self.ventas = _VentasMem(almacen)
+        self.transferencias = _TransferenciasMem(almacen)
         self.clientes = _ClientesMem(almacen)
         self.productos = _ProductosMem(almacen)
         self._foto: dict | None = None
@@ -128,7 +140,8 @@ class UnidadDeTrabajoMemoria(IUnitOfWork):
     def commit(self) -> None:
         agregados = chain(self.almacen.items.values(),
                           self.almacen.apartados.values(),
-                          self.almacen.ventas.values())
+                          self.almacen.ventas.values(),
+                          self.almacen.transferencias.values())
         eventos = [e for ag in agregados for e in ag.extraer_eventos()]
         self._foto = None
         for evento in eventos:         # se publica sólo tras confirmar

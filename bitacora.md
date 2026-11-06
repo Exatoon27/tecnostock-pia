@@ -1,4 +1,4 @@
-# Bitácora de escenarios E01-E15 (TecnoStock)
+# Bitácora de escenarios E01-E20 (TecnoStock)
 
 | Caso | Precondiciones (datos) | Operación | Resultado real | Evento(s) | Estado final | Prueba |
 |---|---|---|---|---|---|---|
@@ -17,3 +17,8 @@
 | E13 | serie=SN-LAP-0005;metodo=EFECTIVO (2026-11-05) | venta_directa(SN-LAP-0005) | RECHAZO TransicionInvalida: No se puede vender una serie en estado RESERVADO | Ninguno | SN-LAP-0005=RESERVADO | tests/test_escenarios.py::test_escenario[E13-memoria o sql] |
 | E14 | ticket=V-0001;serie=SN-LAP-0011;clave=SUP-001 (2026-11-05) | devolucion(V-0001, SN-LAP-0011, SUP-001) | OK | SerieLiberadaEvent, DevolucionAutorizadaEvent | SN-LAP-0011=DISPONIBLE | tests/test_escenarios.py::test_escenario[E14-memoria o sql] |
 | E15 | ticket=V-0002;serie=SN-LAP-0012;clave=SUP-001 (2026-11-05) | devolucion(V-0002, SN-LAP-0012, SUP-001) | RECHAZO ReglaNegocioViolada: Devolución rechazada: fuera del plazo de 15 días | Ninguno | SN-LAP-0012=VENDIDO | tests/test_escenarios.py::test_escenario[E15-memoria o sql] |
+| E16 | serie=SN-LAP-0001;destino=SUC-02 (2026-11-06) | solicitar_traslado(SN-LAP-0001 -> SUC-02) | OK | SerieBloqueadaEvent, TransferenciaSolicitadaEvent | SN-LAP-0001=RESERVADO_TRASLADO | tests/test_escenarios.py::test_escenario[E16-memoria o sql] |
+| E17 | serie=SN-LAP-0005;destino=SUC-02 (2026-11-06) | solicitar_traslado(SN-LAP-0005 -> SUC-02) | RECHAZO TransicionInvalida: No se puede trasladar una serie en estado RESERVADO | Ninguno | SN-LAP-0005=RESERVADO | tests/test_escenarios.py::test_escenario[E17-memoria o sql] |
+| E18 | serie=SN-LAP-0001;destino=SUC-02 (2026-11-06) | solicitar_traslado(SN-LAP-0001 -> SUC-02) → despachar(TR-0001, escaneo SN-LAP-0001) | OK | SerieBloqueadaEvent, TransferenciaSolicitadaEvent, SerieEnTransitoEvent, TransferenciaDespachadaEvent | SN-LAP-0001=EN_TRANSITO | tests/test_escenarios.py::test_escenario[E18-memoria o sql] |
+| E19 | serie=SN-LAP-0001;destino=SUC-02 (2026-11-06) | solicitar_traslado(SN-LAP-0001 -> SUC-02) → despachar(TR-0001, escaneo SN-LAP-0001) → recibir(TR-0001, escaneo SN-LAP-0001, SUC-02) | OK | SerieBloqueadaEvent, TransferenciaSolicitadaEvent, SerieEnTransitoEvent, TransferenciaDespachadaEvent, SerieRecibidaEvent, TransferenciaRecibidaEvent | SN-LAP-0001=DISPONIBLE | tests/test_escenarios.py::test_escenario[E19-memoria o sql] |
+| E20 | serie=SN-LAP-0001;destino=SUC-02;escaneo=SN-LAP-0002 (2026-11-06) | solicitar_traslado(SN-LAP-0001 -> SUC-02) → despachar(TR-0001, escaneo SN-LAP-0002) | RECHAZO ReglaNegocioViolada: La serie escaneada no corresponde al traslado TR-0001 | SerieBloqueadaEvent, TransferenciaSolicitadaEvent | SN-LAP-0001=RESERVADO_TRASLADO | tests/test_escenarios.py::test_escenario[E20-memoria o sql] |

@@ -7,7 +7,9 @@ from src.domain.errores import TransicionInvalida
 from src.domain.eventos import (
     RaizAgregada,
     SerieBloqueadaEvent,
+    SerieEnTransitoEvent,
     SerieLiberadaEvent,
+    SerieRecibidaEvent,
     SerieVendidaEvent,
 )
 from src.domain.valores import SKU, NumeroSerie, SucursalId
@@ -16,7 +18,8 @@ from src.domain.valores import SKU, NumeroSerie, SucursalId
 class EstadoSerie(str, Enum):
     DISPONIBLE = "DISPONIBLE"
     RESERVADO = "RESERVADO"
-    EN_TRANSITO = "EN_TRANSITO"   # reservado para CU-04 (transferencia, PIA)
+    RESERVADO_TRASLADO = "RESERVADO_TRASLADO"   # CU-04: apartada para un traslado
+    EN_TRANSITO = "EN_TRANSITO"                 # CU-04: ya salió de la sucursal origen
     VENDIDO = "VENDIDO"
     EN_GARANTIA = "EN_GARANTIA"   # reservado para garantías (PIA)
 
@@ -58,6 +61,23 @@ class ItemSerie(RaizAgregada):
         self._exigir(esperado, "vender")
         self.estado = EstadoSerie.VENDIDO
         self._emitir(SerieVendidaEvent, sku=self.sku.valor)
+
+    # --- CU-04: traslado entre sucursales ---
+    def reservar_para_traslado(self) -> None:
+        self._exigir(EstadoSerie.DISPONIBLE, "trasladar")
+        self.estado = EstadoSerie.RESERVADO_TRASLADO
+        self._emitir(SerieBloqueadaEvent, sku=self.sku.valor, motivo="traslado")
+
+    def despachar(self) -> None:
+        self._exigir(EstadoSerie.RESERVADO_TRASLADO, "despachar")
+        self.estado = EstadoSerie.EN_TRANSITO
+        self._emitir(SerieEnTransitoEvent, origen=self.sucursal.valor)
+
+    def recibir(self, destino: SucursalId) -> None:
+        self._exigir(EstadoSerie.EN_TRANSITO, "recibir")
+        self.estado = EstadoSerie.DISPONIBLE
+        self.sucursal = destino
+        self._emitir(SerieRecibidaEvent, destino=destino.valor)
 
     def reingresar(self) -> None:
         """Devolución autorizada: VENDIDO -> DISPONIBLE."""

@@ -1,15 +1,18 @@
-"""Ejecuta E01-E15 (datos/escenarios.csv) sobre datos recién cargados y
+"""Ejecuta E01-E20 (datos/escenarios.csv) sobre datos recién cargados y
 genera bitacora.md con precondiciones, operación, resultado, evento y prueba."""
 from datetime import date
 from decimal import Decimal
 
 from src.application.dto import (
     CrearApartadoCommand,
+    DespacharTransferenciaCommand,
     LineaVentaCommand,
     PagoCommand,
     ProcesarDevolucionCommand,
     ProcesarVentaDirectaCommand,
+    RecibirTransferenciaCommand,
     RegistrarAbonoCommand,
+    SolicitarTransferenciaCommand,
 )
 from src.domain.valores import NumeroSerie
 from src.infrastructure.carga_csv import filas
@@ -83,6 +86,33 @@ def ejecutar(caso: dict, c=None):
                     lambda: c.devoluciones.procesar_devolucion_especial(
                         ProcesarDevolucionCommand(
                             p["ticket"], p["serie"], p["clave"], "prueba"), hoy))
+    elif accion in ("solicitar_traslado", "despachar_traslado", "recibir_traslado",
+                    "despacho_serie_erronea"):
+        def pedir():
+            return c.transferencias.solicitar(SolicitarTransferenciaCommand(
+                p["serie"], p["destino"]), hoy)
+
+        def despachar(serie):
+            return c.transferencias.despachar(
+                DespacharTransferenciaCommand("TR-0001", serie))
+
+        if accion == "solicitar_traslado":
+            res, _ = op(f"solicitar_traslado({p['serie']} -> {p['destino']})", pedir)
+        else:
+            pedir()
+            pasos.append(f"solicitar_traslado({p['serie']} -> {p['destino']})")
+            if accion == "despachar_traslado":
+                res, _ = op(f"despachar(TR-0001, escaneo {p['serie']})",
+                            lambda: despachar(p["serie"]))
+            elif accion == "despacho_serie_erronea":
+                res, _ = op(f"despachar(TR-0001, escaneo {p['escaneo']})",
+                            lambda: despachar(p["escaneo"]))
+            else:
+                despachar(p["serie"])
+                pasos.append(f"despachar(TR-0001, escaneo {p['serie']})")
+                res, _ = op(f"recibir(TR-0001, escaneo {p['serie']}, {p['destino']})",
+                            lambda: c.transferencias.recibir(RecibirTransferenciaCommand(
+                                "TR-0001", p["serie"], p["destino"])))
     else:
         raise ValueError(accion)
     eventos = [e.nombre for e in c.bus.publicados] or ["Ninguno"]
@@ -95,7 +125,7 @@ def estado_final(c, p) -> str:
 
 
 def main() -> None:
-    lineas = ["# Bitácora de escenarios E01-E15 (TecnoStock)\n",
+    lineas = ["# Bitácora de escenarios E01-E20 (TecnoStock)\n",
               "| Caso | Precondiciones (datos) | Operación | Resultado real | "
               "Evento(s) | Estado final | Prueba |",
               "|---|---|---|---|---|---|---|"]

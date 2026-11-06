@@ -51,6 +51,25 @@ class ProcesarDevolucionCommand:
     dano_cliente: bool = False
 
 
+@dataclass(frozen=True)
+class SolicitarTransferenciaCommand:
+    numero_serie: str
+    sucursal_destino: str
+
+
+@dataclass(frozen=True)
+class DespacharTransferenciaCommand:
+    folio: str
+    numero_serie: str      # la serie que se escanea al despachar
+
+
+@dataclass(frozen=True)
+class RecibirTransferenciaCommand:
+    folio: str
+    numero_serie: str      # la serie que se escanea al recibir
+    sucursal_id: str       # sucursal que recibe
+
+
 # ---------- Queries ----------
 @dataclass(frozen=True)
 class ConsultarStockGlobalQuery:
@@ -102,3 +121,15 @@ class StockGlobalDTO:
     disponibles: int
     reservados: int
     vendidos: int
+    en_transito: int = 0
+
+
+@dataclass(frozen=True)
+class TransferenciaDTO:
+    folio: str
+    numero_serie: str
+    origen: str
+    destino: str
+    estado: str
+    guia: str | None
+    fecha_solicitud: date

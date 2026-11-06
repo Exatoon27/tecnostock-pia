@@ -32,6 +32,10 @@ class Accion(str, Enum):
     PROCESAR_VENTA = "PROCESAR_VENTA"
     PROCESAR_DEVOLUCION = "PROCESAR_DEVOLUCION"
     PROCESAR_VENCIMIENTOS = "PROCESAR_VENCIMIENTOS"
+    SOLICITAR_TRASLADO = "SOLICITAR_TRASLADO"
+    DESPACHAR_TRASLADO = "DESPACHAR_TRASLADO"
+    RECIBIR_TRASLADO = "RECIBIR_TRASLADO"
+    CONSULTAR_TRASLADO = "CONSULTAR_TRASLADO"
 
 
 _R, _A = Rol, Accion
@@ -49,6 +53,13 @@ PERMISOS: dict[Accion, frozenset[Rol]] = {
     # El Cajero inicia el trámite; la clave del Supervisor sigue siendo
     # obligatoria en el dominio (PoliticaDevolucionDomainService).
     _A.PROCESAR_DEVOLUCION: frozenset({_R.CAJERO, _R.SUPERVISOR}),
+    # BRD: el Vendedor formaliza la solicitud; Almacén despacha y confirma la llegada;
+    # el Supervisor puede hacer ambas (aprueba traslados).
+    _A.SOLICITAR_TRASLADO: frozenset({_R.VENDEDOR, _R.SUPERVISOR}),
+    _A.DESPACHAR_TRASLADO: frozenset({_R.ALMACEN, _R.SUPERVISOR}),
+    _A.RECIBIR_TRASLADO: frozenset({_R.ALMACEN, _R.SUPERVISOR}),
+    _A.CONSULTAR_TRASLADO: frozenset({_R.VENDEDOR, _R.SUPERVISOR, _R.ALMACEN,
+                                      _R.ADMINISTRADOR}),
     _A.PROCESAR_VENCIMIENTOS: frozenset({_R.SISTEMA, _R.SUPERVISOR,
                                          _R.ADMINISTRADOR}),
 }

@@ -13,11 +13,14 @@ from pydantic import BaseModel
 from src.application.dto import (
     ConsultarStockGlobalQuery,
     CrearApartadoCommand,
+    DespacharTransferenciaCommand,
     LineaVentaCommand,
     PagoCommand,
     ProcesarDevolucionCommand,
     ProcesarVentaDirectaCommand,
+    RecibirTransferenciaCommand,
     RegistrarAbonoCommand,
+    SolicitarTransferenciaCommand,
 )
 from src.domain.autorizacion import Accion, exigir
 from src.domain.errores import (
@@ -71,6 +74,21 @@ class VentaIn(BaseModel):
     lineas: list[LineaIn]
     pagos: list[PagoIn]
     fecha: date | None = None
+
+
+class TrasladoIn(BaseModel):
+    numero_serie: str
+    sucursal_destino: str
+    fecha: date | None = None
+
+
+class DespachoIn(BaseModel):
+    numero_serie: str            # la serie que se escanea
+
+
+class RecepcionIn(BaseModel):
+    numero_serie: str            # la serie que se escanea
+    sucursal_id: str             # sucursal que recibe
 
 
 class DevolucionIn(BaseModel):
@@ -165,6 +183,30 @@ def crear_app(c: Contenedor | None = None) -> FastAPI:
             b.empaque_original, b.accesorios_completos, b.dano_cliente)
         return asdict(c.devoluciones.procesar_devolucion_especial(
             cmd, hoy(b.fecha)))
+
+    @app.post("/transferencias", status_code=201,
+              dependencies=[requiere(Accion.SOLICITAR_TRASLADO)])
+    def solicitar_traslado(b: TrasladoIn):
+        return asdict(c.transferencias.solicitar(
+            SolicitarTransferenciaCommand(b.numero_serie, b.sucursal_destino),
+            hoy(b.fecha)))
+
+    @app.get("/transferencias/{folio}",
+             dependencies=[requiere(Accion.CONSULTAR_TRASLADO)])
+    def obtener_traslado(folio: str):
+        return asdict(c.transferencias.consultar(folio))
+
+    @app.post("/transferencias/{folio}/despacho",
+              dependencies=[requiere(Accion.DESPACHAR_TRASLADO)])
+    def despachar_traslado(folio: str, b: DespachoIn):
+        return asdict(c.transferencias.despachar(
+            DespacharTransferenciaCommand(folio, b.numero_serie)))
+
+    @app.post("/transferencias/{folio}/recepcion",
+              dependencies=[requiere(Accion.RECIBIR_TRASLADO)])
+    def recibir_traslado(folio: str, b: RecepcionIn):
+        return asdict(c.transferencias.recibir(
+            RecibirTransferenciaCommand(folio, b.numero_serie, b.sucursal_id)))
 
     return app
 

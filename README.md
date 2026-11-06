@@ -23,14 +23,15 @@ Abre el sistema en el navegador (`http://localhost:8000/`). Arriba a la derecha 
 | Apartar una pieza | **Nuevo apartado** |
 | Vender | **Nueva venta** |
 | Recibir una devolución | **Registrar devolución** (pide la clave del Supervisor) |
+| Mover una pieza a otra tienda | **Nuevo traslado**; después Almacén la despacha y la tienda destino la recibe, escaneando la serie (pestaña **Traslados**) |
 | Ver qué piezas hay y en qué tienda | Pestaña **Inventario** |
 | Liberar los apartados que ya vencieron | **Revisar apartados vencidos** |
 
 El panel nunca muestra códigos técnicos: si algo no se puede hacer, explica por qué ("El anticipo debe ser al menos 20 % del total…", "El puesto de Almacén no tiene permiso para esta operación").
 
 ### Qué incluye hoy y qué no
-Funciona: ventas con serie y pagos combinados, apartados completos, devoluciones con Supervisor, consulta de existencias y permisos por puesto.
-Todavía no: traslados entre tiendas, avisos programados a 5 y 2 días, recepción de lotes, ajustes de inventario, facturación, garantías, modo sin red y reportes. Detalle en [`docs/BRD.md`](docs/BRD.md) y [`docs/trazabilidad.md`](docs/trazabilidad.md).
+Funciona: ventas con serie y pagos combinados, apartados completos, devoluciones con Supervisor, **traslados entre sucursales**, consulta de existencias y permisos por puesto.
+Todavía no: avisos programados a 5 y 2 días, recepción de lotes, ajustes de inventario, facturación, garantías, modo sin red y reportes. Detalle en [`docs/BRD.md`](docs/BRD.md) y [`docs/trazabilidad.md`](docs/trazabilidad.md).
 
 ---
 
@@ -62,7 +63,7 @@ Notas del plan gratuito: el servicio se apaga tras 15 minutos sin visitas y tard
 python -m venv .venv
 # Windows: .venv\Scripts\Activate.ps1   |   Linux/macOS: source .venv/bin/activate
 python -m pip install -r requirements.txt
-python -m pytest --cov=src --cov-fail-under=80    # 251 pasan y 3 (PostgreSQL) se omiten sin TEST_DATABASE_URL
+python -m pytest --cov=src --cov-fail-under=80    # 327 pasan y 4 (PostgreSQL) se omiten sin TEST_DATABASE_URL
 python -m ruff check src tests
 uvicorn src.api.main:app --reload                 # http://127.0.0.1:8000/
 ```
@@ -106,7 +107,8 @@ Ver la tabla completa en [`docs/trazabilidad.md`](docs/trazabilidad.md). Resumen
 | Devolución exige clave de Supervisor | `PoliticaDevolucionDomainService` | `tests/` |
 
 Estados de `Apartado`: ACTIVO → LIQUIDADO → ENTREGADO; ACTIVO → VENCIDO.
-Estados de `ItemSerie`: DISPONIBLE → RESERVADO → (liberada | VENDIDO); VENDIDO → DISPONIBLE (devolución). `EN_TRANSITO` y `EN_GARANTIA` existen en el enum; sus transiciones llegan con los traslados.
+Estados de `ItemSerie`: DISPONIBLE → RESERVADO → (liberada | VENDIDO); VENDIDO → DISPONIBLE (devolución); DISPONIBLE → RESERVADO_TRASLADO → EN_TRANSITO → DISPONIBLE en la sucursal destino (traslado). `EN_GARANTIA` existe en el enum para las garantías.
+Estados de `Transferencia`: PENDIENTE_DESPACHO → EN_TRANSITO → RECIBIDA.
 
 ### API (referencia técnica; detalle en `/docs`)
 | Método y ruta | Caso de uso | Códigos |
@@ -119,19 +121,23 @@ Estados de `ItemSerie`: DISPONIBLE → RESERVADO → (liberada | VENDIDO); VENDI
 | `POST /procesos/vencimientos` | vencimiento de apartados (US-05) | 200 |
 | `POST /ventas` | venta con serie (US-02, US-12) | 201, 404, 409, 422 |
 | `POST /devoluciones` | devolución (US-09, US-10) | 201, 403, 404, 409, 422 |
+| `POST /transferencias` | pedir un traslado (US-07) | 201, 403, 404, 422 |
+| `GET /transferencias/{folio}` | consultar un traslado | 200, 404 |
+| `POST /transferencias/{folio}/despacho` | despachar con escaneo de serie (US-08) | 200, 403, 404, 409, 422 |
+| `POST /transferencias/{folio}/recepcion` | recibir con escaneo de serie (US-08) | 200, 403, 404, 409, 422 |
 
 Transversales: 401 sin o con `X-Rol` desconocido, 403 sin permiso, 402 pago rechazado, 503 pasarela sin respuesta.
 Las fechas se reciben en el cuerpo (`fecha`) para pruebas deterministas; por omisión usan hoy.
 Las claves de Supervisor de demostración están en `datos/supervisores.csv` (ficticias).
 
 ### Calidad
-254 pruebas con PostgreSQL (251 sin él) · cobertura 99 % (umbral 80 %) · 47 casos en `docs/matriz_pruebas.csv` · escenarios E01–E15 idénticos en memoria y SQL · 14/14 mutaciones detectadas · CI en `.github/workflows/ci.yml`. Evidencias en `docs/evidencias_U5.md` y `docs/evidencias/`.
+331 pruebas con PostgreSQL (327 sin él) · cobertura 99 % (umbral 80 %) · 57 casos en `docs/matriz_pruebas.csv` · escenarios E01–E20 idénticos en memoria y SQL · 14/14 mutaciones detectadas · CI en `.github/workflows/ci.yml`. Evidencias en `docs/evidencias_U5.md` y `docs/evidencias/`.
 
 ### Límites conocidos
 - La autenticación es un encabezado `X-Rol` (no hay inicio de sesión real); la autorización por puesto y la clave del Supervisor sí se aplican.
 - El proceso de vencimientos se ejecuta a demanda; no hay programador nocturno.
 - Los eventos se publican tras el commit sin outbox: si el proceso cae justo después, se pierden.
 - La pasarela de pagos y los avisos SMS/correo son simulados.
-- Fuera de alcance por ahora: traslados (CU-04), avisos a 5 y 2 días, recepción de lotes, ajustes, facturación, garantías, contingencia sin red y reportes.
+- Fuera de alcance por ahora: avisos a 5 y 2 días, recepción de lotes, ajustes, facturación, garantías, contingencia sin red y reportes.
 
 Ver también [`docs/trazabilidad_y_diferencias.md`](docs/trazabilidad_y_diferencias.md).

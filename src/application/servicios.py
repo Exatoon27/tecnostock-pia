@@ -13,13 +13,17 @@ from src.application.dto import (
     ApartadoDTO,
     ConsultarStockGlobalQuery,
     CrearApartadoCommand,
+    DespacharTransferenciaCommand,
     NotaCreditoDTO,
     ProcesarDevolucionCommand,
     ProcesarVentaDirectaCommand,
+    RecibirTransferenciaCommand,
     RegistrarAbonoCommand,
     ResumenProcesoVencimientoDTO,
+    SolicitarTransferenciaCommand,
     StockGlobalDTO,
     TicketConfirmacionDTO,
+    TransferenciaDTO,
 )
 from src.domain.apartado import Apartado
 from src.domain.devolucion import PoliticaDevolucionDomainService
@@ -38,6 +42,7 @@ from src.domain.especificaciones import (
 from src.domain.item_serie import EstadoSerie, ItemSerie
 from src.domain.puertos import IPasarelaPagos
 from src.domain.repositorios import IUnitOfWork
+from src.domain.transferencia import Transferencia
 from src.domain.valores import SKU, MontoMonetario, NumeroSerie, SucursalId
 from src.domain.venta import LineaVenta, Pago, Venta
 
@@ -143,6 +148,68 @@ class ApartadoApplicationService:
             return ResumenProcesoVencimientoDTO(vencidos, f"{a_favor:.2f}")
 
 
+def _traslado_dto(t: Transferencia) -> TransferenciaDTO:
+    return TransferenciaDTO(
+        folio=t.folio, numero_serie=t.numero_serie.valor, origen=t.origen.valor,
+        destino=t.destino.valor, estado=t.estado.value, guia=t.guia,
+        fecha_solicitud=t.fecha_solicitud)
+
+
+def _transferencia(uow: IUnitOfWork, folio: str) -> Transferencia:
+    t = uow.transferencias.find_by_id(folio)
+    if t is None:
+        raise RecursoNoEncontrado(f"No existe el traslado {folio}")
+    return t
+
+
+class TransferenciaApplicationService:
+    """CU-04: solicitar, despachar y recibir una pieza entre sucursales."""
+
+    def __init__(self, uow_factory: UowFactory) -> None:
+        self.uow_factory = uow_factory
+
+    def solicitar(self, cmd: SolicitarTransferenciaCommand, hoy: date) -> TransferenciaDTO:
+        with self.uow_factory() as uow:
+            item = _item(uow, cmd.numero_serie)
+            t = Transferencia.solicitar(
+                uow.transferencias.siguiente_folio(), item.numero_serie,
+                item.sucursal, SucursalId(cmd.sucursal_destino), hoy)
+            item.reservar_para_traslado()
+            uow.items.save(item)
+            uow.transferencias.save(t)
+            dto = _traslado_dto(t)
+            uow.commit()
+            return dto
+
+    def despachar(self, cmd: DespacharTransferenciaCommand) -> TransferenciaDTO:
+        with self.uow_factory() as uow:
+            t = _transferencia(uow, cmd.folio)
+            t.despachar(NumeroSerie(cmd.numero_serie))
+            item = _item(uow, t.numero_serie.valor)
+            item.despachar()
+            uow.items.save(item)
+            uow.transferencias.save(t)
+            dto = _traslado_dto(t)
+            uow.commit()
+            return dto
+
+    def recibir(self, cmd: RecibirTransferenciaCommand) -> TransferenciaDTO:
+        with self.uow_factory() as uow:
+            t = _transferencia(uow, cmd.folio)
+            t.recibir(NumeroSerie(cmd.numero_serie), SucursalId(cmd.sucursal_id))
+            item = _item(uow, t.numero_serie.valor)
+            item.recibir(t.destino)
+            uow.items.save(item)
+            uow.transferencias.save(t)
+            dto = _traslado_dto(t)
+            uow.commit()
+            return dto
+
+    def consultar(self, folio: str) -> TransferenciaDTO:
+        with self.uow_factory() as uow:
+            return _traslado_dto(_transferencia(uow, folio))
+
+
 METODOS_CON_PASARELA = {"TARJETA"}
 
 
@@ -244,9 +311,11 @@ class ConsultarStockGlobalQueryHandler:
             if q.sucursal_id and it.sucursal.valor != q.sucursal_id:
                 continue
             cuenta[(it.sku.valor, it.sucursal.valor)][it.estado] += 1
-        return [StockGlobalDTO(sku, suc, c[EstadoSerie.DISPONIBLE],
-                               c[EstadoSerie.RESERVADO], c[EstadoSerie.VENDIDO])
-                for (sku, suc), c in sorted(cuenta.items())]
+        return [StockGlobalDTO(
+            sku, suc, c[EstadoSerie.DISPONIBLE],
+            c[EstadoSerie.RESERVADO] + c[EstadoSerie.RESERVADO_TRASLADO],
+            c[EstadoSerie.VENDIDO], c[EstadoSerie.EN_TRANSITO])
+            for (sku, suc), c in sorted(cuenta.items())]
 
 
 class ConsultarPanelQueryHandler:
@@ -261,6 +330,7 @@ class ConsultarPanelQueryHandler:
             clientes = {c.id: c for c in uow.clientes.listar()}
             productos = {p.sku.valor: p for p in uow.productos.listar()}
             apartados = uow.apartados.listar()
+            traslados = uow.transferencias.listar()
 
         def desc(sku: str) -> str:
             return productos[sku].descripcion if sku in productos else sku
@@ -277,6 +347,15 @@ class ConsultarPanelQueryHandler:
                 "fecha_limite": a.fecha_limite.isoformat(),
                 "saldo_a_favor": str(a.saldo_a_favor) if a.saldo_a_favor else None,
             } for a in apartados],
+            "sucursales": sorted({i.sucursal.valor for i in items.values()}
+                                 | {t.destino.valor for t in traslados}),
+            "transferencias": [{
+                "folio": t.folio, "numero_serie": t.numero_serie.valor,
+                "producto": desc(items[t.numero_serie.valor].sku.valor)
+                if t.numero_serie.valor in items else "",
+                "origen": t.origen.valor, "destino": t.destino.valor,
+                "estado": t.estado.value, "guia": t.guia,
+                "fecha": t.fecha_solicitud.isoformat()} for t in traslados],
             "clientes": [{"id": c.id, "nombre": c.nombre, "activo": c.activo}
                          for c in clientes.values()],
             "productos": [{"sku": p.sku.valor, "descripcion": p.descripcion,

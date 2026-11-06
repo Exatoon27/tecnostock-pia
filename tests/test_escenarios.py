@@ -1,4 +1,4 @@
-"""E01-E15 de datos/escenarios.csv con su resultado esperado (oráculo)."""
+"""E01-E20 de datos/escenarios.csv con su resultado esperado (oráculo)."""
 import pytest
 
 from ejecutar_escenarios import ejecutar, estado_de
@@ -22,6 +22,11 @@ ESPERADO = {
     "E13": ("RECHAZO TransicionInvalida", {"SN-LAP-0005": "RESERVADO"}),
     "E14": ("OK", {"SN-LAP-0011": "DISPONIBLE"}),
     "E15": ("RECHAZO ReglaNegocioViolada", {"SN-LAP-0012": "VENDIDO"}),
+    "E16": ("OK", {"SN-LAP-0001": "RESERVADO_TRASLADO"}),
+    "E17": ("RECHAZO TransicionInvalida", {"SN-LAP-0005": "RESERVADO"}),
+    "E18": ("OK", {"SN-LAP-0001": "EN_TRANSITO"}),
+    "E19": ("OK", {"SN-LAP-0001": "DISPONIBLE"}),
+    "E20": ("RECHAZO ReglaNegocioViolada", {"SN-LAP-0001": "RESERVADO_TRASLADO"}),
 }
 
 
@@ -38,6 +43,6 @@ def test_escenario(caso, backend):
         assert estado_de(c, clave) == estado
 
 
-def test_hay_15_escenarios_y_todos_tienen_oraculo():
+def test_hay_20_escenarios_y_todos_tienen_oraculo():
     assert {x["caso_id"] for x in filas("escenarios.csv")} == set(ESPERADO)
-    assert len(ESPERADO) == 15
+    assert len(ESPERADO) == 20

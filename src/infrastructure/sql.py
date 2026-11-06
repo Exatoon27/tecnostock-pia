@@ -45,9 +45,11 @@ from src.domain.repositorios import (
     IClienteRepository,
     IItemSerieRepository,
     IProductoRepository,
+    ITransferenciaRepository,
     IUnitOfWork,
     IVentaRepository,
 )
+from src.domain.transferencia import EstadoTransferencia, Transferencia
 from src.domain.valores import SKU, MontoMonetario, NumeroSerie, SucursalId
 from src.domain.venta import LineaVenta, Pago, Venta
 from src.infrastructure.memoria import BusEventos
@@ -128,6 +130,22 @@ class ApartadoRow(Base):
         postgresql_where=text("estado IN ('ACTIVO','LIQUIDADO')")),)
 
 
+class TransferenciaRow(Base):
+    __tablename__ = "transferencias"
+    folio: Mapped[str] = mapped_column(String(20), primary_key=True)
+    numero_serie: Mapped[str] = mapped_column(ForeignKey("items_serie.numero_serie"))
+    origen: Mapped[str] = mapped_column(String(20))
+    destino: Mapped[str] = mapped_column(String(20))
+    estado: Mapped[str] = mapped_column(String(20))
+    fecha_solicitud: Mapped[date] = mapped_column(Date)
+    guia: Mapped[str | None] = mapped_column(String(20), nullable=True)
+    # Una pieza no puede tener dos traslados en curso a la vez (garantía en BD).
+    __table_args__ = (Index(
+        "uq_traslado_activo_por_serie", "numero_serie", unique=True,
+        sqlite_where=text("estado IN ('PENDIENTE_DESPACHO','EN_TRANSITO')"),
+        postgresql_where=text("estado IN ('PENDIENTE_DESPACHO','EN_TRANSITO')")),)
+
+
 class LineaVentaRow(Base):
     __tablename__ = "lineas_venta"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -173,6 +191,13 @@ def _apartado_de(r: ApartadoRow) -> Apartado:
     if r.saldo_a_favor is not None:
         ap.saldo_a_favor = MontoMonetario(r.saldo_a_favor)
     return ap
+
+
+def _transferencia_de(r: TransferenciaRow) -> Transferencia:
+    t = Transferencia(r.folio, NumeroSerie(r.numero_serie), SucursalId(r.origen),
+                      SucursalId(r.destino), r.fecha_solicitud)
+    t.estado, t.guia = EstadoTransferencia(r.estado), r.guia
+    return t
 
 
 def _venta_de(r: VentaRow) -> Venta:
@@ -276,6 +301,28 @@ class _VentasSql(_Repos, IVentaRepository):
         self._ver(v)
 
 
+class _TransferenciasSql(_Repos, ITransferenciaRepository):
+    def find_by_id(self, folio):
+        r = self.s.get(TransferenciaRow, folio)
+        return self._ver(_transferencia_de(r)) if r else None
+
+    def listar(self):
+        return [self._ver(_transferencia_de(r)) for r in self.s.scalars(
+            select(TransferenciaRow).order_by(TransferenciaRow.folio))]
+
+    def siguiente_folio(self):
+        n = self.s.scalar(select(func.count()).select_from(TransferenciaRow)) or 0
+        return f"TR-{n + 1:04d}"
+
+    def save(self, t):
+        r = self.s.get(TransferenciaRow, t.folio) or TransferenciaRow(folio=t.folio)
+        r.numero_serie, r.origen = t.numero_serie.valor, t.origen.valor
+        r.destino, r.estado = t.destino.valor, t.estado.value
+        r.fecha_solicitud, r.guia = t.fecha_solicitud, t.guia
+        self.s.add(r)
+        self._ver(t)
+
+
 class _ClientesSql(_Repos, IClienteRepository):
     def find_by_id(self, cliente_id):
         r = self.s.get(ClienteRow, cliente_id)
@@ -321,6 +368,7 @@ class UnidadDeTrabajoSql(IUnitOfWork):
         self.items, self.apartados = _ItemsSql(*args), _ApartadosSql(*args)
         self.ventas, self.clientes = _VentasSql(*args), _ClientesSql(*args)
         self.productos = _ProductosSql(*args)
+        self.transferencias = _TransferenciasSql(*args)
         return self
 
     def __exit__(self, *exc) -> None:
