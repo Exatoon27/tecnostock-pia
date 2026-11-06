@@ -97,7 +97,7 @@ Resumen de las 20 respuestas del levantamiento. La columna **Estado** indica qu�
 | RN-03 | Al vencer, la pieza vuelve a estar disponible y el anticipo **no se devuelve en efectivo**: queda como saldo a favor con **penalización de 10 %** | Implementada |
 | RN-04 | Un cliente puede tener **máximo 3 apartados activos** a la vez | Implementada |
 | RN-05 | Al registrar el anticipo, la pieza queda **reservada** y ya no se puede vender a otra persona | Implementada |
-| RN-06 | Se avisa al cliente **5 y 2 días antes** del vencimiento, por SMS y correo | No implementada (solo hay aviso simulado al vencer) |
+| RN-06 | Se avisa al cliente **5 y 2 días antes** del vencimiento, por SMS y correo | Parcial (se avisa a 5 y 2 días sin repetir y quien liquida deja de recibirlos; el SMS y el correo son simulados y el proceso se ejecuta a demanda) |
 | RN-07 | Devolución: dentro de **15 días**, con empaque original y accesorios completos, y **clave del Supervisor** | Implementada |
 | RN-08 | Si el daño es culpa del cliente, la devolución se bloquea; si es falla de fábrica, hay cambio o nota de crédito | Parcial (hay nota de crédito; no distingue el cambio directo) |
 | RN-09 | El Cajero solo elige método de pago, escanea series y captura datos de facturación; descuentos especiales, cancelaciones y devoluciones son del Supervisor | Parcial (permisos por puesto sí; facturación no) |
@@ -117,9 +117,9 @@ Resumen de las 20 respuestas del levantamiento. La columna **Estado** indica qu�
 
 ## 11. Qué incluye esta entrega y qué no
 
-**Funciona hoy:** ventas con serie y pagos combinados, apartados completos (anticipo, abonos, entrega, vencimiento y saldo a favor), devoluciones con clave de Supervisor, consulta de existencias, traslados entre sucursales con escaneo de serie (solicitud, despacho con guía y recepción) y permisos por puesto. Se opera desde un **panel en lenguaje de negocio**; la parte técnica (API) queda para el equipo de Sistemas.
+**Funciona hoy:** ventas con serie y pagos combinados, apartados completos (anticipo, abonos, entrega, vencimiento y saldo a favor), devoluciones con clave de Supervisor, consulta de existencias, traslados entre sucursales con escaneo de serie (solicitud, despacho con guía y recepción), avisos de vencimiento a 5 y 2 días (SMS y correo simulados) y permisos por puesto. Se opera desde un **panel en lenguaje de negocio**; la parte técnica (API) queda para el equipo de Sistemas.
 
-**Pendiente (planeado, no incluido):** avisos programados a 5 y 2 días, recepción de lotes, ajustes de inventario, facturación, garantías con proveedor, modo sin red y reportes. Cada uno aparece en la matriz de trazabilidad como "No implementado" (o "Parcial").
+**Pendiente (planeado, no incluido):** recepción de lotes, ajustes de inventario, facturación, garantías con proveedor, modo sin red y reportes. Cada uno aparece en la matriz de trazabilidad como "No implementado" (o "Parcial").
 
 ## 12. Supuestos del equipo por validar con el cliente
 

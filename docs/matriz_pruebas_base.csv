@@ -56,3 +56,9 @@ CP-54,Existencias en transito y reservadas,US-01,stock tras solicitar y despacha
 CP-55,Consulta de stock en menos de 3 s,CON-01,consulta global con los datos de demostracion,Responde en menos de 3 segundos,limite,integracion,test_traslados.py,test_la_consulta_de_stock_responde_en_menos_de_3_segundos
 CP-56,Un traslado activo por pieza,RN-15,dos traslados activos de la misma serie,La base rechaza el segundo,error,integracion,test_traslados.py,test_la_base_impide_dos_traslados_activos_de_la_misma_pieza
 CP-57,Permisos de traslado,CON-02 / RN-10,Vendedor o Cajero intenta despachar o recibir,403 Almacen y Supervisor si pueden,error,integracion,test_traslados.py,test_api_solo_almacen_o_supervisor_despachan_y_reciben
+CP-58,Aviso a 5 y a 2 dias,US-06 / RN-06,apartado con 6 5 4 3 2 1 y 0 dias restantes,Solo se avisa a 5 y a 2 dias,limite,unitaria,test_avisos.py,test_solo_se_avisa_a_5_y_a_2_dias
+CP-59,El aviso no se repite,RN-06,proceso ejecutado dos veces el mismo dia,El segundo no envia nada,limite,unitaria,test_avisos.py,test_un_aviso_ya_enviado_no_se_repite
+CP-60,Liquidar cancela los avisos,US-06,cliente que paga el saldo antes,Ya no recibe avisos,exito,integracion,test_avisos.py,test_un_cliente_que_liquida_antes_deja_de_recibir_avisos
+CP-61,Aviso por SMS y correo con saldo y fecha,US-06,apartados a 5 dias del vencimiento,Mensaje con folio dias y saldo pendiente,exito,integracion,test_avisos.py,test_el_aviso_llega_al_gestor_de_notificaciones_con_sms_y_correo
+CP-62,Los avisos persisten en la base,RN-06,dos corridas sobre SQL,No se duplican y el de 2 dias si se envia,exito,integracion,test_avisos.py,test_los_avisos_enviados_persisten_y_no_se_repiten_en_sql
+CP-63,Permisos del proceso de avisos,CON-02,Cajero Vendedor o Almacen ejecutan el proceso,403 Sistema Supervisor y Administrador si pueden,error,integracion,test_avisos.py,test_api_permisos_de_avisos

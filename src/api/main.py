@@ -166,6 +166,11 @@ def crear_app(c: Contenedor | None = None) -> FastAPI:
     def vencimientos(b: VencimientosIn):
         return asdict(c.apartados.procesar_vencimientos(hoy(b.fecha)))
 
+    @app.post("/procesos/avisos",
+              dependencies=[requiere(Accion.PROCESAR_AVISOS)])
+    def avisos(b: VencimientosIn):
+        return asdict(c.apartados.procesar_avisos(hoy(b.fecha)))
+
     @app.post("/ventas", status_code=201,
               dependencies=[requiere(Accion.PROCESAR_VENTA)])
     def vender(b: VentaIn):

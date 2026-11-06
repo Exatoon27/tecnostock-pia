@@ -31,7 +31,8 @@ El panel nunca muestra códigos técnicos: si algo no se puede hacer, explica po
 
 ### Qué incluye hoy y qué no
 Funciona: ventas con serie y pagos combinados, apartados completos, devoluciones con Supervisor, **traslados entre sucursales**, consulta de existencias y permisos por puesto.
-Todavía no: avisos programados a 5 y 2 días, recepción de lotes, ajustes de inventario, facturación, garantías, modo sin red y reportes. Detalle en [`docs/BRD.md`](docs/BRD.md) y [`docs/trazabilidad.md`](docs/trazabilidad.md).
+Avisos a 5 y 2 días del vencimiento: funcionan, con SMS y correo simulados y sin temporizador automático.
+Todavía no: recepción de lotes, ajustes de inventario, facturación, garantías, modo sin red y reportes. Detalle en [`docs/BRD.md`](docs/BRD.md) y [`docs/trazabilidad.md`](docs/trazabilidad.md).
 
 ---
 
@@ -119,6 +120,7 @@ Estados de `Transferencia`: PENDIENTE_DESPACHO → EN_TRANSITO → RECIBIDA.
 | `POST /apartados/{folio}/abonos` | abono | 200, 404, 409, 422 |
 | `POST /apartados/{folio}/entrega` | entrega | 200, 404, 409 |
 | `POST /procesos/vencimientos` | vencimiento de apartados (US-05) | 200 |
+| `POST /procesos/avisos` | avisos a 5 y 2 días del vencimiento (US-06) | 200, 403 |
 | `POST /ventas` | venta con serie (US-02, US-12) | 201, 404, 409, 422 |
 | `POST /devoluciones` | devolución (US-09, US-10) | 201, 403, 404, 409, 422 |
 | `POST /transferencias` | pedir un traslado (US-07) | 201, 403, 404, 422 |
@@ -138,6 +140,7 @@ Las claves de Supervisor de demostración están en `datos/supervisores.csv` (fi
 - El proceso de vencimientos se ejecuta a demanda; no hay programador nocturno.
 - Los eventos se publican tras el commit sin outbox: si el proceso cae justo después, se pierden.
 - La pasarela de pagos y los avisos SMS/correo son simulados.
-- Fuera de alcance por ahora: avisos a 5 y 2 días, recepción de lotes, ajustes, facturación, garantías, contingencia sin red y reportes.
+- Los avisos a 5 y 2 días y el vencimiento se ejecutan a demanda (botón o endpoint); falta el temporizador automático, y el SMS y el correo son simulados.
+- Fuera de alcance por ahora: recepción de lotes, ajustes, facturación, garantías, contingencia sin red y reportes.
 
 Ver también [`docs/trazabilidad_y_diferencias.md`](docs/trazabilidad_y_diferencias.md).

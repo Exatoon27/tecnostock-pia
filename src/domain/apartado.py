@@ -16,6 +16,7 @@ from src.domain.eventos import (
     ApartadoEntregadoEvent,
     ApartadoLiquidadoEvent,
     ApartadoVencidoEvent,
+    AvisoVencimientoEvent,
     RaizAgregada,
 )
 from src.domain.valores import (
@@ -26,6 +27,7 @@ from src.domain.valores import (
 )
 
 VIGENCIA_DIAS = 30
+DIAS_DE_AVISO = (5, 2)       # BRD: aviso a 5 y a 2 días, por SMS y correo
 PENALIZACION = Decimal("0.10")
 
 
@@ -56,6 +58,7 @@ class Apartado(RaizAgregada):
         self.abonos: list[Abono] = []
         self.estado = EstadoApartado.ACTIVO
         self.saldo_a_favor: MontoMonetario | None = None
+        self.avisos: set[int] = set()       # avisos ya enviados (5 y/o 2 días)
 
     @property
     def id_agregado(self) -> str:  # type: ignore[override]
@@ -78,6 +81,18 @@ class Apartado(RaizAgregada):
     @property
     def fecha_limite(self) -> date:
         return self.fecha_creacion + timedelta(days=VIGENCIA_DIAS)
+
+    def dias_para_vencer(self, hoy: date) -> int:
+        return (self.fecha_limite - hoy).days
+
+    def aviso_pendiente(self, hoy: date) -> int | None:
+        """Días del aviso que toca enviar hoy (5 o 2), o None. Sólo apartados ACTIVOS:
+        quien liquida antes deja de recibir avisos."""
+        dias = self.dias_para_vencer(hoy)
+        if (self.estado == EstadoApartado.ACTIVO and dias in DIAS_DE_AVISO
+                and dias not in self.avisos):
+            return dias
+        return None
 
     @property
     def pagado(self) -> MontoMonetario:
@@ -120,6 +135,11 @@ class Apartado(RaizAgregada):
                      penalizacion=str(penalizacion),
                      saldo_a_favor=str(self.saldo_a_favor))
         return True
+
+    def registrar_aviso(self, dias: int, hoy: date) -> None:
+        self.avisos.add(dias)
+        self._emitir(AvisoVencimientoEvent, cliente=self.cliente_id, dias=dias,
+                     saldo=str(self.saldo), fecha_limite=self.fecha_limite.isoformat())
 
     def entregar(self) -> None:
         if self.estado != EstadoApartado.LIQUIDADO:

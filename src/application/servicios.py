@@ -11,6 +11,7 @@ from decimal import Decimal
 
 from src.application.dto import (
     ApartadoDTO,
+    AvisoDTO,
     ConsultarStockGlobalQuery,
     CrearApartadoCommand,
     DespacharTransferenciaCommand,
@@ -19,6 +20,7 @@ from src.application.dto import (
     ProcesarVentaDirectaCommand,
     RecibirTransferenciaCommand,
     RegistrarAbonoCommand,
+    ResumenAvisosDTO,
     ResumenProcesoVencimientoDTO,
     SolicitarTransferenciaCommand,
     StockGlobalDTO,
@@ -146,6 +148,25 @@ class ApartadoApplicationService:
                     a_favor += ap.saldo_a_favor.cantidad
             uow.commit()
             return ResumenProcesoVencimientoDTO(vencidos, f"{a_favor:.2f}")
+
+    def procesar_avisos(self, hoy: date) -> ResumenAvisosDTO:
+        """US-06: a 5 y a 2 días del vencimiento avisa al cliente (SMS y correo)."""
+        with self.uow_factory() as uow:
+            avisos = []
+            for ap in uow.apartados.listar():
+                dias = ap.aviso_pendiente(hoy)
+                if dias is None:
+                    continue
+                cliente = uow.clientes.find_by_id(ap.cliente_id)
+                ap.registrar_aviso(dias, hoy)
+                uow.apartados.save(ap)
+                avisos.append(AvisoDTO(
+                    ap.folio, ap.cliente_id,
+                    cliente.nombre if cliente else ap.cliente_id,
+                    cliente.telefono if cliente else "", cliente.correo if cliente else "",
+                    dias, str(ap.saldo), ap.fecha_limite))
+            uow.commit()
+            return ResumenAvisosDTO(avisos)
 
 
 def _traslado_dto(t: Transferencia) -> TransferenciaDTO:

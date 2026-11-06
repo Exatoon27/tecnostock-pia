@@ -100,6 +100,7 @@ dialog menu{display:flex;justify-content:flex-end;gap:8px;padding:0;margin:18px 
     <button class="btn light" id="bTraslado" type="button">Nuevo traslado</button>
     <button class="btn" id="bDev" type="button">Registrar devolución</button>
     <button class="btn" id="bVenc" type="button">Revisar apartados vencidos</button>
+    <button class="btn" id="bAvisos" type="button">Enviar avisos de vencimiento</button>
   </div>
 </div></header>
 
@@ -119,6 +120,7 @@ dialog menu{display:flex;justify-content:flex-end;gap:8px;padding:0;margin:18px 
       <li><b>Vigencia:</b> un apartado dura 30 días. Si no se liquida a tiempo, vence, la pieza vuelve a estar disponible y se aplica una penalización del 10 %.</li>
       <li><b>Abonos:</b> no pueden pasar del saldo pendiente. Un apartado vencido ya no recibe abonos.</li>
       <li><b>Entrega:</b> solo cuando el apartado está pagado por completo.</li>
+      <li><b>Avisos:</b> a 5 y a 2 días del vencimiento se avisa al cliente por SMS y correo, con su saldo y su fecha límite. Quien liquida antes deja de recibirlos.</li>
       <li><b>Traslados:</b> una pieza disponible se pide a otra sucursal y queda reservada. Almacén la despacha escaneando su serie (sale la guía) y, al llegar, la sucursal destino la recibe escaneando la serie otra vez.</li>
       <li><b>Equipos con número de serie</b> (laptops, monitores): cada venta indica la pieza exacta.</li>
       <li><b>Devoluciones:</b> se aceptan dentro de 15 días, con empaque completo y sin daño del cliente, y requieren la clave de un supervisor.</li>
@@ -383,6 +385,10 @@ $("bDev").onclick = async () => {
 $("bVenc").onclick = () => hacer(() => llamar("/procesos/vencimientos", "POST", {}),
   r => r.vencidos.length ? `Se vencieron ${r.vencidos.length} apartado(s): ${r.vencidos.join(", ")}. Las piezas vuelven a estar disponibles.`
                          : "Ningún apartado está vencido hoy.");
+
+$("bAvisos").onclick = () => hacer(() => llamar("/procesos/avisos", "POST", {}),
+  r => r.avisos.length ? `Se enviaron ${r.avisos.length} aviso(s) por SMS y correo: ${r.avisos.map(a => `${a.folio} (${a.cliente}, vence en ${a.dias} días)`).join("; ")}.`
+                       : "Hoy no hay apartados que venzan en 5 o 2 días.");
 
 cargar();
 </script>

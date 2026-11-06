@@ -111,6 +111,13 @@ class AbonoRow(Base):
     fecha: Mapped[date] = mapped_column(Date)
 
 
+class AvisoRow(Base):
+    __tablename__ = "avisos_apartado"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    folio: Mapped[str] = mapped_column(ForeignKey("apartados.folio"))
+    dias: Mapped[int] = mapped_column(Integer)
+
+
 class ApartadoRow(Base):
     __tablename__ = "apartados"
     folio: Mapped[str] = mapped_column(String(20), primary_key=True)
@@ -123,6 +130,8 @@ class ApartadoRow(Base):
     saldo_a_favor = mapped_column(Dinero, nullable=True)
     abonos: Mapped[list[AbonoRow]] = relationship(
         cascade="all, delete-orphan", order_by=AbonoRow.id, lazy="selectin")
+    avisos: Mapped[list[AvisoRow]] = relationship(
+        cascade="all, delete-orphan", order_by=AvisoRow.id, lazy="selectin")
     # Una serie no puede tener dos apartados vigentes a la vez (garantía en BD).
     __table_args__ = (Index(
         "uq_apartado_vigente_por_serie", "numero_serie", unique=True,
@@ -188,6 +197,7 @@ def _apartado_de(r: ApartadoRow) -> Apartado:
                   r.fecha_creacion)
     ap.abonos = [Abono(MontoMonetario(a.monto), a.fecha) for a in r.abonos]
     ap.estado = EstadoApartado(r.estado)
+    ap.avisos = {x.dias for x in r.avisos}
     if r.saldo_a_favor is not None:
         ap.saldo_a_favor = MontoMonetario(r.saldo_a_favor)
     return ap
@@ -272,6 +282,7 @@ class _ApartadosSql(_Repos, IApartadoRepository):
         r.saldo_a_favor = ap.saldo_a_favor.cantidad if ap.saldo_a_favor else None
         r.abonos = [AbonoRow(monto=a.monto.cantidad, fecha=a.fecha)
                     for a in ap.abonos]
+        r.avisos = [AvisoRow(dias=x) for x in sorted(ap.avisos, reverse=True)]
         self.s.add(r)
         self._ver(ap)
 

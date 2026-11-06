@@ -100,6 +100,23 @@ class ResumenProcesoVencimientoDTO:
 
 
 @dataclass(frozen=True)
+class AvisoDTO:
+    folio: str
+    cliente_id: str
+    cliente: str
+    telefono: str
+    correo: str
+    dias: int
+    saldo: str
+    fecha_limite: date
+
+
+@dataclass(frozen=True)
+class ResumenAvisosDTO:
+    avisos: list[AvisoDTO]
+
+
+@dataclass(frozen=True)
 class TicketConfirmacionDTO:
     ticket_id: str
     total: str

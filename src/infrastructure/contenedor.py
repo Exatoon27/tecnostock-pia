@@ -9,7 +9,10 @@ from dataclasses import dataclass
 from sqlalchemy import func, select
 from sqlalchemy.orm import sessionmaker
 
-from src.application.manejadores import ApartadoVencidoEventHandler
+from src.application.manejadores import (
+    ApartadoVencidoEventHandler,
+    AvisoVencimientoEventHandler,
+)
 from src.application.servicios import (
     ApartadoApplicationService,
     ConsultarPanelQueryHandler,
@@ -49,6 +52,7 @@ class Contenedor:
     stock: ConsultarStockGlobalQueryHandler
     panel: ConsultarPanelQueryHandler
     notificaciones: ApartadoVencidoEventHandler
+    avisos_enviados: AvisoVencimientoEventHandler
     almacen: Almacen | None = None          # sólo con persistencia en memoria
     sesiones: sessionmaker | None = None    # sólo con SQL
 
@@ -56,13 +60,15 @@ class Contenedor:
 def _armar(bus, fabrica, politica, pasarela, **extra) -> Contenedor:
     notif = ApartadoVencidoEventHandler()
     bus.suscribir("ApartadoVencidoEvent", notif)
+    avisos = AvisoVencimientoEventHandler()
+    bus.suscribir("AvisoVencimientoEvent", avisos)
     return Contenedor(
         bus, fabrica, ApartadoApplicationService(fabrica),
         VentaApplicationService(fabrica, pasarela or PasarelaSimulada()),
         DevolucionApplicationService(fabrica, politica),
         TransferenciaApplicationService(fabrica),
         ConsultarStockGlobalQueryHandler(fabrica),
-        ConsultarPanelQueryHandler(fabrica), notif, **extra)
+        ConsultarPanelQueryHandler(fabrica), notif, avisos, **extra)
 
 
 def construir(almacen: Almacen | None = None,
