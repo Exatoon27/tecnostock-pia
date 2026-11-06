@@ -198,7 +198,7 @@ async function llamar(ruta, metodo, cuerpo){
     503:"El servicio de pagos no responde. Intenta de nuevo en unos minutos."
   }[r.status];
   if (m) throw new Error(m);
-  if (typeof j.detail === "string") throw new Error(j.detail);
+  if (typeof j.detail === "string") throw new Error(j.detail.replace(">=", "al menos").replace("<=", "como máximo"));
   throw new Error("Revisa los datos capturados: falta algo o no tiene el formato correcto.");
 }
 async function hacer(fn, okMsg){
