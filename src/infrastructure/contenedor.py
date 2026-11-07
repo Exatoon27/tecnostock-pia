@@ -33,6 +33,7 @@ from src.infrastructure.memoria import (
 )
 from src.infrastructure.pasarela import PasarelaSimulada
 from src.infrastructure.sql import (
+    Base,
     ClienteRow,
     SupervisorAuthSql,
     UnidadDeTrabajoSql,
@@ -107,6 +108,22 @@ def normalizar_url(url: str) -> str:
         if url.startswith(prefijo):
             return "postgresql+psycopg://" + url[len(prefijo):]
     return url
+
+
+def reiniciar_datos(c: Contenedor) -> None:
+    """Restaura los datos de demostración (CSV). Para recuperar la demo en línea
+    si alguien la modificó; en SQL borra y vuelve a crear todas las tablas."""
+    datos = cargar_almacen()
+    if c.almacen is not None:
+        c.almacen.__dict__.update(datos.__dict__)
+    else:
+        engine = c.sesiones.kw["bind"]
+        Base.metadata.drop_all(engine)
+        Base.metadata.create_all(engine)
+        sembrar(c.sesiones, datos)
+    c.bus.publicados.clear()
+    c.notificaciones.notificaciones.clear()
+    c.avisos_enviados.mensajes.clear()
 
 
 def construir_desde_entorno() -> Contenedor:

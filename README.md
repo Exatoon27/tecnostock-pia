@@ -57,6 +57,17 @@ El archivo `render.yaml` describe la aplicación (con el `Dockerfile`) y su base
 2. **New → Blueprint**, elegir el repositorio y confirmar. Render construye la imagen, crea la base y conecta ambas con `DATABASE_URL`.
 3. La URL pública abre el panel en `/` y Swagger en `/docs`. Ya está publicado en la dirección indicada arriba.
 
+### Si alguien modifica la demostración en línea
+El panel es público: cualquiera puede apartar, vender o devolver y los datos quedan guardados. Para volver a los datos de
+demostración (los CSV de `datos/`):
+1. En Render, abrir el servicio → **Environment** y copiar el valor de `RESET_TOKEN` (Render lo genera con `render.yaml`).
+2. Ejecutar (sustituyendo la clave):
+```bash
+curl -X POST -H "X-Reset-Token: LA_CLAVE" https://tecnostock-7k73.onrender.com/admin/reiniciar
+```
+Responde `Datos de demostración restaurados`. Sin la clave correcta responde 403 y no cambia nada; si `RESET_TOKEN` no existe, el endpoint
+no está disponible. No aparece en Swagger. Conviene restaurar antes de cada defensa.
+
 Notas del plan gratuito: el servicio se apaga tras 15 minutos sin visitas y tarda en despertar (abrirlo antes de una demostración); la base gratuita expira a los 30 días.
 
 ### Sin Docker

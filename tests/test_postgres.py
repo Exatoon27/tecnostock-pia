@@ -63,3 +63,24 @@ def test_traslado_completo_en_postgres(api):
     serie = next(s for s in api.get("/panel/datos").json()["series"]
                  if s["numero_serie"] == "SN-LAP-0003")
     assert (serie["estado"], serie["sucursal"]) == ("DISPONIBLE", "SUC-01")
+
+
+def test_reiniciar_datos_en_postgres():
+    from datetime import date
+    from decimal import Decimal
+
+    from src.application.dto import CrearApartadoCommand
+    from src.domain.item_serie import EstadoSerie
+    from src.domain.valores import NumeroSerie
+    from src.infrastructure.contenedor import reiniciar_datos
+
+    engine = create_engine(URL)
+    Base.metadata.drop_all(engine)
+    engine.dispose()
+    c = construir_sql(URL)
+    c.apartados.crear_apartado(
+        CrearApartadoCommand("TEC-C001", "SN-LAP-0001", Decimal("67.20")), date(2026, 11, 6))
+    reiniciar_datos(c)
+    with c.uow_factory() as uow:
+        assert len(uow.apartados.listar()) == 5
+        assert uow.items.find_by_serie(NumeroSerie("SN-LAP-0001")).estado == EstadoSerie.DISPONIBLE

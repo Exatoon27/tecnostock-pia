@@ -1,6 +1,8 @@
 """API REST (FastAPI): controladores delgados; las reglas viven en el dominio."""
 from __future__ import annotations
 
+import hmac
+import os
 from dataclasses import asdict
 from datetime import date
 from decimal import Decimal
@@ -33,7 +35,11 @@ from src.domain.errores import (
     ServicioNoDisponible,
     TransicionInvalida,
 )
-from src.infrastructure.contenedor import Contenedor, construir_desde_entorno
+from src.infrastructure.contenedor import (
+    Contenedor,
+    construir_desde_entorno,
+    reiniciar_datos,
+)
 
 ESTADOS_HTTP = {
     DatosInvalidos: 422, ReglaNegocioViolada: 422, TransicionInvalida: 409,
@@ -170,6 +176,18 @@ def crear_app(c: Contenedor | None = None) -> FastAPI:
               dependencies=[requiere(Accion.PROCESAR_AVISOS)])
     def avisos(b: VencimientosIn):
         return asdict(c.apartados.procesar_avisos(hoy(b.fecha)))
+
+    @app.post("/admin/reiniciar", include_in_schema=False)
+    def reiniciar(x_reset_token: str | None = Header(None)):
+        """Restaura los datos de demostración. Existe sólo si la variable de entorno
+        RESET_TOKEN está definida, y exige esa misma clave en el encabezado."""
+        esperado = os.getenv("RESET_TOKEN")
+        if not esperado:
+            return JSONResponse(status_code=404, content={"detail": "No disponible"})
+        if not x_reset_token or not hmac.compare_digest(x_reset_token, esperado):
+            return JSONResponse(status_code=403, content={"detail": "Clave incorrecta"})
+        reiniciar_datos(c)
+        return {"detail": "Datos de demostración restaurados"}
 
     @app.post("/ventas", status_code=201,
               dependencies=[requiere(Accion.PROCESAR_VENTA)])
